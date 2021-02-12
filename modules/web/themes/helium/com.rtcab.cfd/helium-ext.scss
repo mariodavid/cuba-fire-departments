@@ -1,0 +1,12 @@
+/* Define your theme modifications inside next mixin */
+@mixin com_rtcab_cfd-helium-ext {
+  /* Basic */
+  --primary-color: #D80000;
+  --primary-color_rgb: 216, 0, 0;
+
+  /* Common */
+  --primary-color-shade-1: #BD0000;
+  --primary-color-shade-2: #A80000;
+  --primary-dim-color: #FF2E2E;
+
+}

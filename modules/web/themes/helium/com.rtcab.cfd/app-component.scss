@@ -1,0 +1,5 @@
+@import "helium-ext";
+
+@mixin com_rtcab_cfd {
+  @include com_rtcab_cfd-helium-ext;
+}

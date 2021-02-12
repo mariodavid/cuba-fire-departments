@@ -35,6 +35,7 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
+    appComponent('com.haulmont.addon.helium:helium-global:0.3.1')
 }
 
 def hsql = 'org.hsqldb:hsqldb:2.4.1'
@@ -147,6 +148,21 @@ configure(webModule) {
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
         appName = "${modulePrefix}"
         appJars(modulePrefix + '-global', modulePrefix + '-web')
+    }
+
+    task buildScssThemes(type: CubaWebScssThemeCreation)
+
+    task deployThemes(type: CubaDeployThemeTask, dependsOn: buildScssThemes)
+
+    assemble.dependsOn buildScssThemes
+
+    task themesJar(type: Jar) {
+        from file('themes')
+        classifier = 'themes'
+    }
+
+    artifacts {
+        archives themesJar
     }
 }
 

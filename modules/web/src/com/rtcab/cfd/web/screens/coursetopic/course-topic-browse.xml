@@ -33,10 +33,9 @@
                 <action id="remove" type="remove"/>
             </actions>
             <columns>
-                <column id="title"/>
-                <column id="summary"/>
                 <column id="level"/>
-                <column id="content"/>
+                <column id="title"/>
+                <column id="summary" maxTextLength="50"/>
             </columns>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"
