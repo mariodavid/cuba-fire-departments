@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://fireDepartmentEdit.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.firedepartment">
+    <data>
+        <instance id="fireDepartmentDc"
+                  class="com.rtcab.cfd.entity.FireDepartment">
+            <view extends="_local">
+                <property name="employees" view="_base"/>
+                <property name="operations" view="_base"/>
+            </view>
+            <loader/>
+            <collection id="employeesDc" property="employees"/>
+            <collection id="operationsDc" property="operations"/>
+        </instance>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="contentTabSheet" spacing="true">
+        <label dataContainer="fireDepartmentDc" property="name" stylename="h1"/>
+        <tabSheet id="contentTabSheet">
+            <tab id="operations" caption="msg://operations" spacing="true" margin="true">
+                <table id="operationsTable" dataContainer="operationsDc" width="100%" height="200px">
+                    <actions>
+                        <action id="view" type="view"/>
+                    </actions>
+                    <columns>
+                        <column id="startsAt"/>
+                        <column id="endsAt"/>
+                        <column id="type"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="operationsTable.view"/>
+                    </buttonsPanel>
+                </table>
+            </tab>
+            <tab id="employees" caption="msg://employees" spacing="true" margin="true">
+                <table id="employeesTable" dataContainer="employeesDc" width="100%" height="200px">
+                    <actions>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="firstName"/>
+                        <column id="birthdate"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="employeesTable.create"/>
+                        <button action="employeesTable.edit"/>
+                        <button action="employeesTable.remove"/>
+                    </buttonsPanel>
+                </table>
+            </tab>
+            <tab id="masterdata" caption="msg://masterdata" spacing="true" margin="true">
+                <form id="form" dataContainer="fireDepartmentDc">
+                    <column width="350px">
+                        <textField id="nameField" property="name"/>
+                        <textField id="streetField" property="street"/>
+                        <textField id="housenumberField" property="housenumber"/>
+                        <textField id="cityField" property="city"/>
+                        <textField id="postalCodeField" property="postalCode"/>
+                        <lookupField id="typeField" property="type"/>
+                    </column>
+                </form>
+            </tab>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

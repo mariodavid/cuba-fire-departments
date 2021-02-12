@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <persistence-unit name="cuba-fire-departments" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.rtcab.cfd.entity.Course</class>
+        <class>com.rtcab.cfd.entity.Employee</class>
+        <class>com.rtcab.cfd.entity.FireDepartment</class>
+        <class>com.rtcab.cfd.entity.CourseTopic</class>
+        <class>com.rtcab.cfd.entity.CourseTopicAttachment</class>
+        <class>com.rtcab.cfd.entity.Operation</class>
+        <class>com.rtcab.cfd.entity.OperationType</class>
+        <class>com.rtcab.cfd.entity.OperationReport</class>
+        <class>com.rtcab.cfd.entity.Equipment</class>
+        <class>com.rtcab.cfd.entity.Maintenance</class>
+    </persistence-unit>
+</persistence>

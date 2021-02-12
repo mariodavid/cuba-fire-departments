@@ -1,0 +1,103 @@
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://maintenanceBrowse.caption"
+        focusComponent="table"
+        messagesPack="com.rtcab.cfd.web.screens.maintenance">
+    <data>
+        <collection id="maintenancesDc"
+                    class="com.rtcab.cfd.entity.Maintenance">
+            <view extends="_local">
+                <property name="equipment" view="_minimal"/>
+                <property name="performedBy" view="_minimal"/>
+            </view>
+            <loader id="maintenancesDl">
+                <query>
+                    <![CDATA[select e from cfd_Maintenance e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="maintenanceDc"
+                  class="com.rtcab.cfd.entity.Maintenance">
+            <view extends="_local">
+                <property name="equipment" view="_minimal"/>
+                <property name="performedBy" view="_minimal"/>
+            </view>
+            <loader/>
+        </instance>
+        <collection id="equipmentsDc" class="com.rtcab.cfd.entity.Equipment" view="_minimal">
+            <loader id="equipmentsDl">
+                <query>
+                    <![CDATA[select e from cfd_Equipment e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="save" icon="icons/ok.png" caption="mainMsg://actions.Ok" shortcut="CTRL-ENTER"/>
+        <action id="cancel" icon="icons/cancel.png" caption="mainMsg://actions.Cancel" description="Esc"/>
+    </actions>
+    <dialogMode height="600" width="800"/>
+    <layout>
+        <split id="split" height="100%" orientation="horizontal" reversePosition="true" width="100%">
+            <vbox id="lookupBox" expand="table" height="100%" margin="false,true,false,false" spacing="true">
+                <filter id="filter" applyTo="table" dataLoader="maintenancesDl">
+                    <properties include=".*"/>
+                </filter>
+                <groupTable id="table"
+                            width="100%"
+                            dataContainer="maintenancesDc">
+                    <actions>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                        <action id="refresh" type="refresh"/>
+                        <action id="excel" type="excel"/>
+                    </actions>
+                    <columns>
+                        <column id="equipment"/>
+                        <column id="scheduledAt"/>
+                        <column id="performedAt"/>
+                        <column id="performedBy"/>
+                        <column id="status"/>
+                    </columns>
+                    <rowsCount/>
+                    <buttonsPanel id="buttonsPanel"
+                                  alwaysVisible="true">
+                        <button id="createBtn" action="table.create"/>
+                        <button id="editBtn" action="table.edit"/>
+                        <button id="removeBtn" action="table.remove"/>
+                        <button id="refreshBtn" action="table.refresh"/>
+                        <button id="excelBtn" action="table.excel"/>
+                    </buttonsPanel>
+                </groupTable>
+                <hbox id="lookupActions" spacing="true" visible="false">
+                    <button action="lookupSelectAction"/>
+                    <button action="lookupCancelAction"/>
+                </hbox>
+            </vbox>
+            <vbox id="editBox" height="100%" margin="false,false,false,true" expand="fieldGroupBox" spacing="true">
+                <scrollBox id="fieldGroupBox">
+                    <form id="form" dataContainer="maintenanceDc">
+                        <column width="350px">
+                            <lookupPickerField id="equipmentField" optionsContainer="equipmentsDc"
+                                               property="equipment"/>
+                            <dateField id="scheduledAtField" property="scheduledAt"/>
+                            <dateField id="performedAtField" property="performedAt"/>
+                            <pickerField id="performedByField" property="performedBy">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <lookupField id="statusField" property="status"/>
+                        </column>
+                    </form>
+                </scrollBox>
+                <hbox id="actionsPane" spacing="true" visible="false">
+                    <button id="saveBtn" action="save"/>
+                    <button id="cancelBtn" action="cancel"/>
+                </hbox>
+            </vbox>
+        </split>
+    </layout>
+</window>

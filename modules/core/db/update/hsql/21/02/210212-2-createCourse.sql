@@ -1,0 +1,4 @@
+alter table CFD_COURSE add constraint FK_CFD_COURSE_ON_COURSE_LEADER foreign key (COURSE_LEADER_ID) references CFD_EMPLOYEE(ID);
+alter table CFD_COURSE add constraint FK_CFD_COURSE_ON_TOPIC foreign key (TOPIC_ID) references CFD_COURSE_TOPIC(ID);
+create index IDX_CFD_COURSE_ON_COURSE_LEADER on CFD_COURSE (COURSE_LEADER_ID);
+create index IDX_CFD_COURSE_ON_TOPIC on CFD_COURSE (TOPIC_ID);

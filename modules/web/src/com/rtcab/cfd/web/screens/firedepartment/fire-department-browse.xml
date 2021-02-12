@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://fireDepartmentBrowse.caption"
+        focusComponent="fireDepartmentsTable"
+        messagesPack="com.rtcab.cfd.web.screens.firedepartment">
+    <data readOnly="true">
+        <collection id="fireDepartmentsDc"
+                    class="com.rtcab.cfd.entity.FireDepartment">
+            <view extends="_local"/>
+            <loader id="fireDepartmentsDl">
+                <query>
+                    <![CDATA[select e from cfd_FireDepartment e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="fireDepartmentsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="fireDepartmentsTable"
+                dataLoader="fireDepartmentsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="fireDepartmentsTable"
+                    width="100%"
+                    dataContainer="fireDepartmentsDc"
+                    multiselect="true"
+                    presentations="true">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+                <action id="refresh" type="refresh"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="type"/>
+                <column id="street"/>
+                <column id="city"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="fireDepartmentsTable.create"/>
+                <button id="editBtn" action="fireDepartmentsTable.edit"/>
+                <button id="removeBtn" action="fireDepartmentsTable.remove"/>
+                <button id="refreshBtn" action="fireDepartmentsTable.refresh"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

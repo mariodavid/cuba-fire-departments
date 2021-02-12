@@ -1,0 +1,2 @@
+alter table CFD_COURSE_EMPLOYEE_LINK add constraint FK_COUEMP_ON_COURSE foreign key (COURSE_ID) references CFD_COURSE(ID);
+alter table CFD_COURSE_EMPLOYEE_LINK add constraint FK_COUEMP_ON_EMPLOYEE foreign key (EMPLOYEE_ID) references CFD_EMPLOYEE(ID);

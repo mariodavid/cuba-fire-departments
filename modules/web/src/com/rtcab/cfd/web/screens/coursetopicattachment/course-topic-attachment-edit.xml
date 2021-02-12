@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://courseTopicAttachmentEdit.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.coursetopicattachment">
+    <data>
+        <instance id="courseTopicAttachmentDc"
+                  class="com.rtcab.cfd.entity.CourseTopicAttachment">
+            <view extends="_local">
+                <property name="file" view="_minimal"/>
+            </view>
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="AUTO"
+                width="AUTO"
+                modal="true"
+                forceDialog="true"/>
+    <layout expand="editActions" spacing="true">
+        <form id="form" dataContainer="courseTopicAttachmentDc">
+            <column width="350px">
+                <textField id="nameField" property="name"/>
+                <textField id="descriptionField" property="description"/>
+                <upload id="fileField" fileStoragePutMode="IMMEDIATE" property="file" showFileName="true"/>
+            </column>
+        </form>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

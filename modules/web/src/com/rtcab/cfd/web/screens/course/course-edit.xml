@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://courseEdit.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.course">
+    <data>
+        <instance id="courseDc"
+                  class="com.rtcab.cfd.entity.Course">
+            <view extends="_local">
+                <property name="participants" view="_minimal"/>
+                <property name="courseLeader" view="_minimal"/>
+                <property name="topic" view="_minimal"/>
+            </view>
+            <loader/>
+            <collection id="participantsDc" property="participants"/>
+        </instance>
+        <collection id="topicsDc" class="com.rtcab.cfd.entity.CourseTopic" view="_minimal">
+            <loader id="topicsDl">
+                <query>
+                    <![CDATA[select e from cfd_CourseTopic e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="editActions" spacing="true">
+        <form id="form" dataContainer="courseDc">
+            <column width="350px">
+                <dateField id="startsAtField" property="startsAt"/>
+                <dateField id="endsAtField" property="endsAt"/>
+                <pickerField id="courseLeaderField" property="courseLeader"/>
+                <lookupPickerField id="topicField" optionsContainer="topicsDc" property="topic"/>
+            </column>
+        </form>
+        <groupBox id="participantsBox" caption="msg://com.rtcab.cfd.entity/Course.participants">
+            <table id="participantsTable" dataContainer="participantsDc" width="100%" height="200px">
+                <actions>
+                    <action id="add" type="add"/>
+                    <action id="exclude" type="exclude"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                </columns>
+                <buttonsPanel>
+                    <button action="participantsTable.add"/>
+                    <button action="participantsTable.exclude"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>
