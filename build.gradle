@@ -1,14 +1,13 @@
-
 buildscript {
     ext.cubaVersion = '7.2.11'
     repositories {
         maven {
             url 'https://dl.bintray.com/cuba-platform/main'
-            
+
         }
         jcenter()
 
-        
+
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
@@ -38,7 +37,7 @@ dependencies {
     appComponent('com.haulmont.addon.helium:helium-global:0.3.1')
 }
 
-def hsql = 'org.hsqldb:hsqldb:2.4.1'
+def postgres = 'org.postgresql:postgresql:42.2.9'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
@@ -46,10 +45,10 @@ configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'cuba')
 
     dependencies {
-            testCompile('org.junit.jupiter:junit-jupiter-api:5.5.2')
-            testCompile('org.junit.jupiter:junit-jupiter-engine:5.5.2')
-            testCompile('org.junit.vintage:junit-vintage-engine:5.5.2')  
-        }
+        testCompile('org.junit.jupiter:junit-jupiter-api:5.5.2')
+        testCompile('org.junit.jupiter:junit-jupiter-engine:5.5.2')
+        testCompile('org.junit.vintage:junit-vintage-engine:5.5.2')
+    }
 
     task sourceJar(type: Jar) {
         from file('src')
@@ -58,7 +57,7 @@ configure([globalModule, coreModule, webModule]) {
 
     artifacts {
         archives sourceJar
-    } 
+    }
     test {
         useJUnitPlatform()
     }
@@ -90,8 +89,8 @@ configure(coreModule) {
     dependencies {
         compile(globalModule)
         compileOnly(servletApi)
-        jdbc(hsql)
-        testRuntime(hsql)
+        jdbc(postgres)
+        testRuntime(postgres)
     }
 
     task cleanConf(description: 'Cleans up conf directory', type: Delete) {
@@ -183,3 +182,27 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
 }
 restart.finalizedBy start
 
+
+
+task stage(dependsOn: ['setupTomcat', ":${modulePrefix}-core:deploy", ":${modulePrefix}-web:deploy"]) {
+    doLast {
+        // change port from 8080 to heroku $PORT
+        def file = new File('deploy/tomcat/conf/server.xml')
+        file.text = file.text.replace('8080', '${port.http}')
+
+        // rename deploy/tomcat/webapps/app to deploy/tomcat/webapps/ROOT
+        def rootFolder = new File('deploy/tomcat/webapps/ROOT')
+        if (rootFolder.exists()) {
+            rootFolder.deleteDir()
+        }
+
+        def webAppDir = new File("deploy/tomcat/webapps/${modulePrefix}")
+        webAppDir.renameTo(new File(rootFolder.path))
+
+        // add local.app.properties for web application
+        def webConfDir = new File('deploy/tomcat/conf/ROOT/')
+        webConfDir.mkdirs()
+        def webProperties = new File(webConfDir, 'local.app.properties')
+        webProperties.text = ''' cuba.webContextName = / '''
+    }
+}

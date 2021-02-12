@@ -3,5 +3,20 @@
   <component name="CubaPluginProjectSettings">
     <option name="groupUpdateScriptsBy" value="MONTH" />
     <option name="stateVersion" value="1" />
+    <option name="savedDbProperties">
+      <list>
+        <SavedDbProperties>
+          <option name="databaseName" value="cfd-323956" />
+          <option name="dbType" value="hsql" />
+          <option name="dbmsVersion" />
+          <option name="host" value="localhost" />
+          <option name="port" value="9010" />
+          <option name="systemPassword" value="" />
+          <option name="systemUser" value="" />
+          <option name="url" value="jdbc:hsqldb:hsql://localhost:9010/cfd-323956" />
+          <option name="user" value="sa" />
+        </SavedDbProperties>
+      </list>
+    </option>
   </component>
 </project>
