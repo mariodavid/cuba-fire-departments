@@ -15,15 +15,13 @@ import com.rtcab.cfd.entity.*;
 public class FirefigtherRole extends AnnotatedRoleDefinition {
     public final static String NAME = "Firefigther";
 
-    @ScreenAccess(screenIds = {
-            "cfd_FireDepartment.browse", "application-cfd", "cfd_Employee.browse", "cfd_Maintenance.browse", "cfd_Equipment.browse", "cfd_Course.browse",
-            "courseManagement", "cfd_CourseTopic.browse", "cfd_Course.edit", "cfd_CourseTopic.edit", "cfd_CourseTopicAttachment.edit",
-            "cfd_Employee.edit", "cfd_Equipment.edit", "cfd_FireDepartment.edit", "fireLogin", "fireMainScreen"})
+    @ScreenAccess(screenIds = {"cfd_FireDepartment.browse", "application-cfd", "cfd_Employee.browse", "cfd_Maintenance.browse", "cfd_Equipment.browse", "cfd_Course.browse", "courseManagement", "cfd_CourseTopic.browse", "cfd_Course.edit", "cfd_CourseTopic.edit", "cfd_CourseTopicAttachment.edit", "cfd_Employee.edit", "cfd_Equipment.edit", "cfd_FireDepartment.edit", "fireLogin", "fireMainScreen", "cfd_Operation.browse", "cfd_Operation.edit", "cfd_OperationReport.edit", "cfd_OperationType.edit", "cfd_OperationType.browse"})
     @Override
     public ScreenPermissionsContainer screenPermissions() {
         return super.screenPermissions();
     }
 
+    @EntityAccess(entityClass = Employee.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @EntityAccess(entityClass = OperationReport.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @EntityAccess(entityClass = OperationType.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @EntityAccess(entityClass = Operation.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
@@ -38,6 +36,7 @@ public class FirefigtherRole extends AnnotatedRoleDefinition {
         return super.entityPermissions();
     }
 
+    @EntityAttributeAccess(entityClass = Employee.class, modify = "*")
     @EntityAttributeAccess(entityClass = OperationReport.class, modify = "*")
     @EntityAttributeAccess(entityClass = OperationType.class, modify = "*")
     @EntityAttributeAccess(entityClass = Operation.class, modify = "*")
