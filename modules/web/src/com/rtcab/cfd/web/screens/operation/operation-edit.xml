@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://operationEdit.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.operation">
+    <data>
+        <instance id="operationDc"
+                  class="com.rtcab.cfd.entity.Operation">
+            <view extends="_local">
+                <property name="responsibleDepartment" view="_minimal"/>
+                <property name="operationLead" view="_minimal"/>
+                <property name="type" view="_minimal"/>
+                <property name="reports" view="_minimal">
+                    <property name="creator" view="_minimal" />
+                </property>
+            </view>
+            <loader/>
+            <collection id="reportsDc" property="reports"/>
+        </instance>
+        <collection id="responsibleDepartmentsDc" class="com.rtcab.cfd.entity.FireDepartment" view="_minimal">
+            <loader id="responsibleDepartmentsDl">
+                <query>
+                    <![CDATA[select e from cfd_FireDepartment e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="operationLeadsDc" class="com.rtcab.cfd.entity.Employee" view="_minimal">
+            <loader id="operationLeadsDl">
+                <query>
+                    <![CDATA[select e from cfd_Employee e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="768"
+                width="1024"/>
+    <layout expand="reportsBox" spacing="true">
+        <form id="form" dataContainer="operationDc">
+            <column width="350px">
+                <textField id="titleField" property="title"/>
+                <lookupPickerField id="responsibleDepartmentField" optionsContainer="responsibleDepartmentsDc"
+                                   property="responsibleDepartment"/>
+                <lookupPickerField id="operationLeadField" optionsContainer="operationLeadsDc"
+                                   property="operationLead"/>
+            </column>
+            <column width="350px">
+
+                <dateField id="startsAtField" property="startsAt"/>
+                <dateField id="endsAtField" property="endsAt"/>
+
+                <pickerField id="typeField" property="type">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                        <action id="clear" type="picker_clear"/>
+                    </actions>
+                </pickerField>
+            </column>
+        </form>
+        <groupBox id="reportsBox" expand="reportsTable" caption="msg://com.rtcab.cfd.entity/Operation.reports">
+            <table id="reportsTable" dataContainer="reportsDc" width="100%">
+                <actions>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column id="title"/>
+                    <column id="creator"/>
+                </columns>
+                <buttonsPanel>
+                    <button action="reportsTable.create"/>
+                    <button action="reportsTable.edit"/>
+                    <button action="reportsTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+    <item screen="cfd_Operation.browse" caption="mainMsg://menu_config.cfd_Operation.browse" insertBefore="administration"/>
     <menu id="application-cfd" insertBefore="administration" caption="mainMsg://menu_config.application-cfd">
         <item screen="cfd_FireDepartment.browse" caption="mainMsg://menu_config.cfd_FireDepartment.browse"/>
         <item screen="cfd_Employee.browse" caption="mainMsg://menu_config.cfd_Employee.browse"/>

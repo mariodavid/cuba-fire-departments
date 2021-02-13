@@ -162,6 +162,7 @@ create table CFD_OPERATION (
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
     --
+    TITLE varchar(255),
     RESPONSIBLE_DEPARTMENT_ID uuid not null,
     OPERATION_LEAD_ID uuid,
     STARTS_AT timestamp not null,

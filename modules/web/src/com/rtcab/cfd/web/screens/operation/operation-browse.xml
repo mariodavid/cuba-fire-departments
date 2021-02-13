@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://operationBrowse.caption"
+        focusComponent="operationsTable"
+        messagesPack="com.rtcab.cfd.web.screens.operation">
+    <data readOnly="true">
+        <collection id="operationsDc"
+                    class="com.rtcab.cfd.entity.Operation">
+            <view extends="_local">
+                <property name="responsibleDepartment" view="_minimal"/>
+                <property name="type" view="_minimal"/>
+            </view>
+            <loader id="operationsDl">
+                <query>
+                    <![CDATA[select e from cfd_Operation e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="contentTabSheet"
+            spacing="true">
+        <filter id="filter"
+                applyTo="operationsTable"
+                dataLoader="operationsDl">
+            <properties include=".*"/>
+        </filter>
+        <tabSheet id="contentTabSheet">
+            <tab id="calendarTab" spacing="true" margin="true" caption="msg://calendar">
+                <calendar id="calendar"
+                          dataContainer="operationsDc"
+                          startDateProperty="startsAt"
+                          endDateProperty="endsAt"
+                          navigationButtonsVisible="true"
+                          descriptionProperty="title"
+                          captionProperty="title"
+                          width="100%" height="100%"/>
+            </tab>
+            <tab id="tableTab" spacing="true" margin="true" caption="msg://list">
+                <groupTable id="operationsTable"
+                            width="100%"
+                            dataContainer="operationsDc">
+                    <actions>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                        <action id="refresh" type="refresh"/>
+                        <action id="excel" type="excel"/>
+                    </actions>
+                    <columns>
+                        <column id="title"/>
+                        <column id="responsibleDepartment"/>
+                        <column id="startsAt"/>
+                        <column id="endsAt"/>
+                        <column id="type"/>
+                    </columns>
+                    <rowsCount/>
+                    <buttonsPanel id="buttonsPanel"
+                                  alwaysVisible="true">
+                        <button id="createBtn" action="operationsTable.create"/>
+                        <button id="editBtn" action="operationsTable.edit"/>
+                        <button id="removeBtn" action="operationsTable.remove"/>
+                        <button id="refreshBtn" action="operationsTable.refresh"/>
+                        <button id="excelBtn" action="operationsTable.excel"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+        </tabSheet>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

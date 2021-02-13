@@ -1,6 +1,7 @@
 package com.rtcab.cfd.entity;
 
 import com.haulmont.chile.core.annotations.Composition;
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -14,8 +15,12 @@ import java.util.List;
 
 @Table(name = "CFD_OPERATION")
 @Entity(name = "cfd_Operation")
+@NamePattern("%s (%s - %s)|title,startsAt,endsAt")
 public class Operation extends StandardEntity {
     private static final long serialVersionUID = -8943891362501235336L;
+
+    @Column(name = "TITLE")
+    private String title;
 
     @Lookup(type = LookupType.DROPDOWN, actions = {})
     @NotNull
@@ -43,6 +48,14 @@ public class Operation extends StandardEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "operation")
     private List<OperationReport> reports;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public List<OperationReport> getReports() {
         return reports;
