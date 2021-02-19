@@ -36,14 +36,14 @@
               <bproc:formFieldProperty name="uiComponent" value="pickerField" />
               <bproc:formFieldProperty name="entityName" value="cfd_Course" />
             </bproc:formField>
-            <bproc:formField id="employee" caption="Employee" type="entity" editable="false" required="false">
+            <bproc:formField id="employee" caption="Employee" type="entity" editable="false" required="true">
               <bproc:formFieldProperty name="uiComponent" value="pickerField" />
               <bproc:formFieldProperty name="entityName" value="cfd_Employee" />
             </bproc:formField>
           </bproc:formFields>
           <bproc:formOutcomes>
-            <bproc:formOutcome id="approved" caption="Approved" icon="font-icon:CHECK" />
-            <bproc:formOutcome id="rejected" caption="Rejected" icon="font-icon:BAN" />
+            <bproc:formOutcome id="approved" caption="Approve" icon="font-icon:CHECK" />
+            <bproc:formOutcome id="rejected" caption="Reject" icon="font-icon:BAN" />
           </bproc:formOutcomes>
         </bproc:formData>
       </extensionElements>
@@ -122,7 +122,7 @@
               <bproc:formFieldProperty name="entityName" value="cfd_Course" />
             </bproc:formField>
             <bproc:formField id="employee" caption="Employee" type="entity" editable="true" required="true">
-              <bproc:formFieldProperty name="uiComponent" value="lookupField" />
+              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
               <bproc:formFieldProperty name="entityName" value="cfd_Employee" />
             </bproc:formField>
           </bproc:formFields>

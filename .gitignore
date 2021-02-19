@@ -9,3 +9,5 @@ modules/*/build/*
 .idea/*
 out
 test-run
+
+*.DS_Store
