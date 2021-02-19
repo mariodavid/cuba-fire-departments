@@ -10,6 +10,7 @@ import com.haulmont.cuba.security.role.EntityAttributePermissionsContainer;
 import com.haulmont.cuba.security.role.EntityPermissionsContainer;
 import com.haulmont.cuba.security.role.ScreenPermissionsContainer;
 import com.rtcab.cfd.entity.*;
+import de.diedavids.cuba.userinbox.entity.Message;
 
 @Role(name = FirefigtherRole.NAME)
 public class FirefigtherRole extends AnnotatedRoleDefinition {
@@ -31,6 +32,7 @@ public class FirefigtherRole extends AnnotatedRoleDefinition {
     @EntityAccess(entityClass = CourseTopicAttachment.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @EntityAccess(entityClass = CourseTopic.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @EntityAccess(entityClass = Course.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
+    @EntityAccess(entityClass = Message.class, operations = {EntityOp.CREATE, EntityOp.UPDATE, EntityOp.READ, EntityOp.DELETE})
     @Override
     public EntityPermissionsContainer entityPermissions() {
         return super.entityPermissions();
@@ -46,6 +48,7 @@ public class FirefigtherRole extends AnnotatedRoleDefinition {
     @EntityAttributeAccess(entityClass = CourseTopicAttachment.class, modify = "*")
     @EntityAttributeAccess(entityClass = CourseTopic.class, modify = "*")
     @EntityAttributeAccess(entityClass = Course.class, modify = "*")
+    @EntityAttributeAccess(entityClass = Message.class, modify = "*")
     @Override
     public EntityAttributePermissionsContainer entityAttributePermissions() {
         return super.entityAttributePermissions();
