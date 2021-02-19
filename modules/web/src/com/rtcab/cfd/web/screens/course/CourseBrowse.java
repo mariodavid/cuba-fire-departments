@@ -48,7 +48,7 @@ public class CourseBrowse extends StandardLookup<Course> {
                 .optional();
 
 
-        if (employee.isEmpty()){
+        if (!employee.isPresent()){
             enrollmentOnlyPossibleForEmployeesError.show();
             return;
         }
