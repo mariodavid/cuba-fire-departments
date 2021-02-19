@@ -15,7 +15,7 @@ import com.rtcab.cfd.entity.*;
 public class FirefigtherRole extends AnnotatedRoleDefinition {
     public final static String NAME = "Firefigther";
 
-    @ScreenAccess(screenIds = {"cfd_FireDepartment.browse", "application-cfd", "cfd_Employee.browse", "cfd_Maintenance.browse", "cfd_Equipment.browse", "cfd_Course.browse", "courseManagement", "cfd_CourseTopic.browse", "cfd_Course.edit", "cfd_CourseTopic.edit", "cfd_CourseTopicAttachment.edit", "cfd_Employee.edit", "cfd_Equipment.edit", "cfd_FireDepartment.edit", "fireLogin", "fireMainScreen", "cfd_Operation.browse", "cfd_Operation.edit", "cfd_OperationReport.edit", "cfd_OperationType.edit", "cfd_OperationType.browse"})
+    @ScreenAccess(screenIds = {"cfd_FireDepartment.browse", "application-cfd", "cfd_Employee.browse", "cfd_Maintenance.browse", "cfd_Equipment.browse", "cfd_Course.browse", "courseManagement", "cfd_CourseTopic.browse", "cfd_Course.edit", "cfd_CourseTopic.edit", "cfd_CourseTopicAttachment.edit", "cfd_Employee.edit", "cfd_Equipment.edit", "cfd_FireDepartment.edit", "fireLogin", "fireMainScreen", "cfd_Operation.browse", "cfd_Operation.edit", "cfd_OperationReport.edit", "cfd_OperationType.edit", "cfd_OperationType.browse", "ddcui$user-inbox", "ddcui$message-details", "ddcui$send-message"})
     @Override
     public ScreenPermissionsContainer screenPermissions() {
         return super.screenPermissions();
