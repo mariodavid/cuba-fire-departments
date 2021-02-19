@@ -34,6 +34,7 @@ create table CFD_EMPLOYEE (
     FIRST_NAME varchar(255),
     BIRTHDATE date,
     FIRE_DEPARTMENT_ID uuid not null,
+    USER_ID uuid,
     --
     primary key (ID)
 )^

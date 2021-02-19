@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:bproc="http://schemas.haulmont.com/bproc/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef">
+  <collaboration id="Collaboration_0owb7bp">
+    <participant id="CFD" name="CFD" processRef="course-enrollment" />
+  </collaboration>
+  <process id="course-enrollment" name="Course enrollment" isExecutable="true" flowable:candidateStarterGroups="Everyone" bproc:candidateStarterGroupsValue="Everyone">
+    <laneSet id="LaneSet_1crthix">
+      <lane id="Lane_0yqs1hl" name="Employee">
+        <extensionElements>
+          <bproc:assignmentDetails assigneeSource="expression" candidateUsersSource="users" candidateGroups="Everyone" candidateGroupsValue="Everyone" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>courseEnrollmentRequested</flowNodeRef>
+      </lane>
+      <lane id="Lane_1l4ka1u" name="Course Leader">
+        <extensionElements>
+          <bproc:assignmentDetails assigneeSource="expression" assigneeValue="${course.courseLeader.user.id}" assignee="${course.courseLeader.user.id}" candidateUsersSource="users" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>approve-request</flowNodeRef>
+        <flowNodeRef>request-approved-decision</flowNodeRef>
+      </lane>
+      <lane id="Lane_085c2sl" name="System">
+        <flowNodeRef>add-employee-to-course</flowNodeRef>
+        <flowNodeRef>enrollment-rejected</flowNodeRef>
+        <flowNodeRef>send-rejection-message</flowNodeRef>
+        <flowNodeRef>enrollment-approved</flowNodeRef>
+        <flowNodeRef>send-confirmation-message</flowNodeRef>
+      </lane>
+    </laneSet>
+    <sequenceFlow id="SequenceFlow_11qdx2i" sourceRef="courseEnrollmentRequested" targetRef="approve-request" />
+    <sequenceFlow id="SequenceFlow_0ap8oy5" sourceRef="approve-request" targetRef="request-approved-decision" />
+    <userTask id="approve-request" name="Approve Request" bproc:assigneeSource="processVariable">
+      <extensionElements>
+        <bproc:formData type="input-dialog" openMode="DIALOG">
+          <bproc:formFields>
+            <bproc:formField id="course" caption="Course" type="entity" editable="false" required="false">
+              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
+              <bproc:formFieldProperty name="entityName" value="cfd_Course" />
+            </bproc:formField>
+            <bproc:formField id="employee" caption="Employee" type="entity" editable="false" required="false">
+              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
+              <bproc:formFieldProperty name="entityName" value="cfd_Employee" />
+            </bproc:formField>
+          </bproc:formFields>
+          <bproc:formOutcomes>
+            <bproc:formOutcome id="approved" caption="Approved" icon="font-icon:CHECK" />
+            <bproc:formOutcome id="rejected" caption="Rejected" icon="font-icon:BAN" />
+          </bproc:formOutcomes>
+        </bproc:formData>
+      </extensionElements>
+      <incoming>SequenceFlow_11qdx2i</incoming>
+      <outgoing>SequenceFlow_0ap8oy5</outgoing>
+    </userTask>
+    <exclusiveGateway id="request-approved-decision" name="Approved?">
+      <incoming>SequenceFlow_0ap8oy5</incoming>
+      <outgoing>request-approved</outgoing>
+      <outgoing>request-rejected</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="request-approved" name="approved" sourceRef="request-approved-decision" targetRef="add-employee-to-course">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="approve-request" userTaskOutcome="approved" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('approve-request_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('approve-request_result'), 'approved')}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="request-rejected" name="rejected" sourceRef="request-approved-decision" targetRef="send-rejection-message">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="approve-request" userTaskOutcome="rejected" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('approve-request_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('approve-request_result'), 'rejected')}</conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="add-employee-to-course" name="Add Employee to Course" flowable:expression="${cfd_CourseEnrollmentService.enrollEmployee(course, employee)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="cfd_CourseEnrollmentService" methodName="enrollEmployee">
+          <bproc:methodParam name="course" type="com.rtcab.cfd.entity.Course" isVariable="true">course</bproc:methodParam>
+          <bproc:methodParam name="employee" type="com.rtcab.cfd.entity.Employee" isVariable="true">employee</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>request-approved</incoming>
+      <outgoing>SequenceFlow_1o2q1ks</outgoing>
+    </serviceTask>
+    <endEvent id="enrollment-rejected" name="Enrollment rejected">
+      <incoming>SequenceFlow_0uvv9ou</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_0uvv9ou" sourceRef="send-rejection-message" targetRef="enrollment-rejected" />
+    <serviceTask id="send-rejection-message" name="Send Rejection Message" flowable:async="true" flowable:expression="${ddcui_MessageService.sendSystemMessage(requestor, &#39;Course Request rejected&#39;, &#39;Sorry, but the request was rejected...&#39;)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="ddcui_MessageService" methodName="sendSystemMessage">
+          <bproc:methodParam name="receiver" type="com.haulmont.cuba.security.entity.User" isVariable="true">requestor</bproc:methodParam>
+          <bproc:methodParam name="subject" type="java.lang.String" isVariable="false">Course Request rejected</bproc:methodParam>
+          <bproc:methodParam name="messageText" type="java.lang.String" isVariable="false">Sorry, but the request was rejected...</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>request-rejected</incoming>
+      <outgoing>SequenceFlow_0uvv9ou</outgoing>
+    </serviceTask>
+    <sequenceFlow id="SequenceFlow_1o2q1ks" sourceRef="add-employee-to-course" targetRef="send-confirmation-message">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1kwxvww" sourceRef="send-confirmation-message" targetRef="enrollment-approved" />
+    <endEvent id="enrollment-approved" name="Enrollment approved">
+      <incoming>SequenceFlow_1kwxvww</incoming>
+    </endEvent>
+    <serviceTask id="send-confirmation-message" name="Send Confirmation Message" flowable:expression="${ddcui_MessageService.sendSystemMessage(requestor, &#39;Course Enrollment completed&#39;, &#39;Congratulations, you are enrolled to the Course. We are looking forward to you!&#39;, course)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="ddcui_MessageService" methodName="sendSystemMessage">
+          <bproc:methodParam name="receiver" type="com.haulmont.cuba.security.entity.User" isVariable="true">requestor</bproc:methodParam>
+          <bproc:methodParam name="subject" type="java.lang.String" isVariable="false">Course Enrollment completed</bproc:methodParam>
+          <bproc:methodParam name="messageText" type="java.lang.String" isVariable="false">Congratulations, you are enrolled to the Course. We are looking forward to you!</bproc:methodParam>
+          <bproc:methodParam name="entityReference" type="com.haulmont.cuba.core.entity.Entity" isVariable="true">course</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>SequenceFlow_1o2q1ks</incoming>
+      <outgoing>SequenceFlow_1kwxvww</outgoing>
+    </serviceTask>
+    <startEvent id="courseEnrollmentRequested" name="Course Enrollment Requested">
+      <extensionElements>
+        <bproc:formData type="input-dialog" openMode="DIALOG">
+          <bproc:formFields>
+            <bproc:formField id="course" caption="Course" type="entity" editable="true" required="true">
+              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
+              <bproc:formFieldProperty name="entityName" value="cfd_Course" />
+            </bproc:formField>
+            <bproc:formField id="employee" caption="Employee" type="entity" editable="true" required="true">
+              <bproc:formFieldProperty name="uiComponent" value="lookupField" />
+              <bproc:formFieldProperty name="entityName" value="cfd_Employee" />
+            </bproc:formField>
+          </bproc:formFields>
+        </bproc:formData>
+      </extensionElements>
+      <outgoing>SequenceFlow_11qdx2i</outgoing>
+    </startEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_0owb7bp">
+      <bpmndi:BPMNShape id="Participant_1u6rsmk_di" bpmnElement="CFD" isHorizontal="true">
+        <omgdc:Bounds x="31" y="67" width="948" height="566" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="courseEnrollmentRequested">
+        <omgdc:Bounds x="167" y="121" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="155" y="158" width="54" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_11qdx2i_di" bpmnElement="SequenceFlow_11qdx2i">
+        <omgdi:waypoint x="197" y="136" />
+        <omgdi:waypoint x="280" y="136" />
+        <omgdi:waypoint x="280" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_0yqs1hl_di" bpmnElement="Lane_0yqs1hl" isHorizontal="true">
+        <omgdc:Bounds x="61" y="67" width="918" height="159" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1l4ka1u_di" bpmnElement="Lane_1l4ka1u" isHorizontal="true">
+        <omgdc:Bounds x="61" y="226" width="918" height="143" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0foknn8_di" bpmnElement="request-approved-decision" isMarkerVisible="true">
+        <omgdc:Bounds x="397" y="265" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="395" y="235" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ap8oy5_di" bpmnElement="SequenceFlow_0ap8oy5">
+        <omgdi:waypoint x="330" y="290" />
+        <omgdi:waypoint x="397" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1qmooeq_di" bpmnElement="approve-request">
+        <omgdc:Bounds x="230" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00dxt5z_di" bpmnElement="request-approved">
+        <omgdi:waypoint x="422" y="315" />
+        <omgdi:waypoint x="422" y="557" />
+        <omgdi:waypoint x="502" y="557" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="430" y="520" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0ggf7pq_di" bpmnElement="add-employee-to-course">
+        <omgdc:Bounds x="502" y="517" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_085c2sl_di" bpmnElement="Lane_085c2sl" isHorizontal="true">
+        <omgdc:Bounds x="61" y="369" width="918" height="264" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qerlc7_di" bpmnElement="request-rejected">
+        <omgdi:waypoint x="422" y="315" />
+        <omgdi:waypoint x="422" y="469" />
+        <omgdi:waypoint x="659" y="469" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="442" y="446" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1r9gkdd_di" bpmnElement="enrollment-rejected">
+        <omgdc:Bounds x="849" y="451" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="841" y="494" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uvv9ou_di" bpmnElement="SequenceFlow_0uvv9ou">
+        <omgdi:waypoint x="759" y="469" />
+        <omgdi:waypoint x="849" y="469" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0010hx4_di" bpmnElement="send-rejection-message">
+        <omgdc:Bounds x="659" y="429" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o2q1ks_di" bpmnElement="SequenceFlow_1o2q1ks">
+        <omgdi:waypoint x="602" y="557" />
+        <omgdi:waypoint x="659" y="557" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_15fe6aq_di" bpmnElement="enrollment-approved">
+        <omgdc:Bounds x="849" y="539" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="841" y="582" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kwxvww_di" bpmnElement="SequenceFlow_1kwxvww">
+        <omgdi:waypoint x="759" y="557" />
+        <omgdi:waypoint x="849" y="557" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1388jpg_di" bpmnElement="send-confirmation-message">
+        <omgdc:Bounds x="659" y="517" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

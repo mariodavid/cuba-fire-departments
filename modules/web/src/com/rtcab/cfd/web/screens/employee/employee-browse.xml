@@ -9,6 +9,7 @@
                     class="com.rtcab.cfd.entity.Employee">
             <view extends="_local">
                 <property name="fireDepartment" view="_minimal"/>
+                <property name="user" view="_minimal"/>
             </view>
             <loader id="employeesDl">
                 <query>

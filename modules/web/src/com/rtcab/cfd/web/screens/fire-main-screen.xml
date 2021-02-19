@@ -1,5 +1,9 @@
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         caption="mainMsg://application.caption">
+
+    <facets>
+        <timer id="updateCountersTimer" delay="3000" autostart="true" repeating="true" />
+    </facets>
     <layout expand="horizontalWrap"
             stylename="c-sidemenu-responsive"
             responsive="true">

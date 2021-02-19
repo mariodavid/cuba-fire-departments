@@ -1,5 +1,6 @@
 package com.rtcab.cfd.entity;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -7,10 +8,11 @@ import com.haulmont.cuba.core.entity.annotation.LookupType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Table(name = "CFD_COURSE")
 @Entity(name = "cfd_Course")
+@NamePattern("%s: %s - %s|topic,startsAt,endsAt")
 public class Course extends StandardEntity {
     private static final long serialVersionUID = 3559732508002428446L;
 
@@ -18,7 +20,7 @@ public class Course extends StandardEntity {
             joinColumns = @JoinColumn(name = "COURSE_ID"),
             inverseJoinColumns = @JoinColumn(name = "EMPLOYEE_ID"))
     @ManyToMany
-    private List<Employee> participants;
+    private Set<Employee> participants;
 
     @NotNull
     @Column(name = "STARTS_AT", nullable = false)
@@ -39,6 +41,14 @@ public class Course extends StandardEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "TOPIC_ID")
     private CourseTopic topic;
+
+    public void setParticipants(Set<Employee> participants) {
+        this.participants = participants;
+    }
+
+    public Set<Employee> getParticipants() {
+        return participants;
+    }
 
     public CourseTopic getTopic() {
         return topic;
@@ -72,11 +82,4 @@ public class Course extends StandardEntity {
         this.startsAt = startsAt;
     }
 
-    public List<Employee> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<Employee> participants) {
-        this.participants = participants;
-    }
 }

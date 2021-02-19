@@ -9,6 +9,9 @@
                     class="com.rtcab.cfd.entity.Course">
             <view extends="_local">
                 <property name="topic" view="_minimal"/>
+                <property name="courseLeader" view="_minimal">
+                    <property name="user" view="_minimal"/>
+                </property>
             </view>
             <loader id="coursesDl">
                 <query>
@@ -19,6 +22,14 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+    <facets>
+        <notification id="enrollmentOnlyPossibleForEmployeesError"
+                      caption="msg://enrollmentOnlyPossibleForEmployees"
+                      type="ERROR" />
+        <notification id="enrollmentRequestSendNotification"
+                      caption="msg://enrollmentRequestSend"
+                      type="TRAY" />
+    </facets>
     <layout expand="coursesTable"
             spacing="true">
         <filter id="filter"
@@ -33,6 +44,7 @@
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
+                <action id="enroll" caption="msg://enroll" trackSelection="true"/>
             </actions>
             <columns>
                 <column id="startsAt"/>
@@ -45,6 +57,7 @@
                 <button id="createBtn" action="coursesTable.create"/>
                 <button id="editBtn" action="coursesTable.edit"/>
                 <button id="removeBtn" action="coursesTable.remove"/>
+                <button id="enrollBtn" action="coursesTable.enroll"/>
             </buttonsPanel>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">

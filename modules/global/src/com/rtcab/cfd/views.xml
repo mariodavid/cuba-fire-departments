@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
 
+    <view entity="cfd_Course" name="course-complete" extends="_local">
+        <property name="participants" view="_minimal"/>
+        <property name="courseLeader" view="_minimal"/>
+        <property name="topic" view="_minimal"/>
+    </view>
+    <view entity="cfd_Employee" name="employee-complete" extends="_local">
+        <property name="courses" view="_minimal"/>
+        <property name="fireDepartment" view="_minimal"/>
+        <property name="user" view="_minimal"/>
+    </view>
 </views>

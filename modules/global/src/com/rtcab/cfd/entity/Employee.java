@@ -2,6 +2,9 @@ package com.rtcab.cfd.entity;
 
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
+import com.haulmont.cuba.security.entity.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,6 +34,19 @@ public class Employee extends StandardEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FIRE_DEPARTMENT_ID")
     private FireDepartment fireDepartment;
+
+    @JoinColumn(name = "USER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Lookup(type = LookupType.DROPDOWN, actions = {})
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public FireDepartment getFireDepartment() {
         return fireDepartment;
