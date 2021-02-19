@@ -59,7 +59,7 @@ public class CourseBrowse extends StandardLookup<Course> {
         processVariables.put("employee", employee.get());
         processVariables.put("requestor", currentUser);
         bprocRuntimeService.startProcessInstanceByKey(
-                "process",
+                "course-enrollment",
                 course.getTopic().getTitle(),
                 processVariables
         );
