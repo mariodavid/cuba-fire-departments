@@ -46,15 +46,15 @@
     <sequenceFlow id="SequenceFlow_00coj21" sourceRef="schedule-maintenance-request" targetRef="scheduled-decision" />
     <sequenceFlow id="SequenceFlow_1in3gji" name="need to reschedule" sourceRef="scheduled-decision" targetRef="reschedule-maintenance">
       <extensionElements>
-        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_02rojum" userTaskOutcome="Need-to-Reschedule" />
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="schedule-maintenance-request" userTaskOutcome="Need-to-Reschedule" />
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_02rojum_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_02rojum_result'), 'Need-to-Reschedule')}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('schedule-maintenance-request_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('schedule-maintenance-request_result'), 'Need-to-Reschedule')}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_0xku85x" name="scheduled" sourceRef="scheduled-decision" targetRef="wait-for-scheduled-at-event">
       <extensionElements>
-        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_02rojum" userTaskOutcome="Scheduled" />
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="schedule-maintenance-request" userTaskOutcome="Scheduled" />
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_02rojum_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_02rojum_result'), 'Scheduled')}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('schedule-maintenance-request_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('schedule-maintenance-request_result'), 'Scheduled')}</conditionExpression>
     </sequenceFlow>
     <intermediateCatchEvent id="wait-for-scheduled-at-event" name="Wait for Maintenance Scheduled Date">
       <incoming>SequenceFlow_0xku85x</incoming>
@@ -72,15 +72,15 @@
     <sequenceFlow id="SequenceFlow_0v0rdnr" sourceRef="perform-maintenance" targetRef="ExclusiveGateway_1kn6943" />
     <sequenceFlow id="SequenceFlow_1530anv" name="complete" sourceRef="ExclusiveGateway_1kn6943" targetRef="complete-maintenance">
       <extensionElements>
-        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_09emz40" userTaskOutcome="complete" />
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="perform-maintenance" userTaskOutcome="complete" />
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_09emz40_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_09emz40_result'), 'complete')}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('perform-maintenance_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('perform-maintenance_result'), 'complete')}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_0wkhhre" name="cancel" sourceRef="ExclusiveGateway_1kn6943" targetRef="cancel-maintenance">
       <extensionElements>
-        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_09emz40" userTaskOutcome="cancel" />
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="perform-maintenance" userTaskOutcome="cancel" />
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_09emz40_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_09emz40_result'), 'cancel')}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('perform-maintenance_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('perform-maintenance_result'), 'cancel')}</conditionExpression>
     </sequenceFlow>
     <serviceTask id="complete-maintenance" name="Complete Maintenance" flowable:expression="${cfd_MaintenanceService.finishMaintenance(maintenance)}" bproc:taskType="springBean">
       <extensionElements>
