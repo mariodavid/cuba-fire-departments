@@ -3,15 +3,19 @@ package com.rtcab.cfd.entity;
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
+import com.haulmont.cuba.security.entity.User;
+import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Table(name = "CFD_FIRE_DEPARTMENT")
 @Entity(name = "cfd_FireDepartment")
@@ -31,6 +35,11 @@ public class FireDepartment extends StandardEntity {
     @OneToMany(mappedBy = "fireDepartment")
     private List<Employee> employees;
 
+    @JoinColumn(name = "FIRE_CHIEF_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Lookup(type = LookupType.DROPDOWN, actions = {})
+    private Employee fireChief;
+
     @Column(name = "STREET")
     private String street;
 
@@ -46,6 +55,14 @@ public class FireDepartment extends StandardEntity {
     @NotNull
     @Column(name = "TYPE_", nullable = false)
     private String type;
+
+    public Employee getFireChief() {
+        return fireChief;
+    }
+
+    public void setFireChief(Employee fireChief) {
+        this.fireChief = fireChief;
+    }
 
     public List<Operation> getOperations() {
         return operations;
@@ -109,5 +126,17 @@ public class FireDepartment extends StandardEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<User> mechanics() {
+        if (CollectionUtils.isEmpty(getEmployees()))  {
+            return Collections.emptyList();
+        }
+
+        return getEmployees().stream()
+                .filter(Employee::getMechanic)
+                .map(Employee::getUser)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

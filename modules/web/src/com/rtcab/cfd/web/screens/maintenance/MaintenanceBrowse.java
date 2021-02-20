@@ -5,7 +5,7 @@ import com.rtcab.cfd.entity.Maintenance;
 
 @UiController("cfd_Maintenance.browse")
 @UiDescriptor("maintenance-browse.xml")
-@LookupComponent("table")
+@LookupComponent("maintenancesTable")
 @LoadDataBeforeShow
-public class MaintenanceBrowse extends MasterDetailScreen<Maintenance> {
+public class MaintenanceBrowse extends StandardLookup<Maintenance> {
 }

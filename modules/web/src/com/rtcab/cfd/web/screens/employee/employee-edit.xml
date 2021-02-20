@@ -37,6 +37,7 @@
                     </actions>
                 </pickerField>
                 <lookupField id="userField" property="user" optionsContainer="usersDc"/>
+                <checkBox id="mechanicField" property="mechanic"/>
             </column>
         </form>
         <groupBox id="coursesBox" caption="msg://com.rtcab.cfd.entity/Employee.courses">

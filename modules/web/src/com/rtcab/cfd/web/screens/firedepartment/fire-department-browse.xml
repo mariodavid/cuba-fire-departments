@@ -7,7 +7,9 @@
     <data readOnly="true">
         <collection id="fireDepartmentsDc"
                     class="com.rtcab.cfd.entity.FireDepartment">
-            <view extends="_local"/>
+            <view extends="_local">
+                <property name="fireChief" view="_minimal"/>
+            </view>
             <loader id="fireDepartmentsDl">
                 <query>
                     <![CDATA[select e from cfd_FireDepartment e]]>

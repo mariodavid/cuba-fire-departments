@@ -19,6 +19,15 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+
+    <facets>
+        <notification id="noEquipmentSelectedError"
+                      caption="msg://noEquipmentSelected"
+                      type="ERROR" />
+        <notification id="maintenanceScheduledNotification"
+                      caption="msg://maintenanceScheduled"
+                      type="TRAY" />
+    </facets>
     <layout expand="equipmentsTable"
             spacing="true">
         <filter id="filter"
@@ -35,6 +44,7 @@
                 <action id="remove" type="remove"/>
                 <action id="refresh" type="refresh"/>
                 <action id="excel" type="excel"/>
+                <action id="scheduleMaintenance" caption="msg://scheduleMaintenance" icon="font-icon:CLOCK_O"/>
             </actions>
             <columns>
                  <group>
@@ -51,6 +61,7 @@
                 <button id="removeBtn" action="equipmentsTable.remove"/>
                 <button id="refreshBtn" action="equipmentsTable.refresh"/>
                 <button id="excelBtn" action="equipmentsTable.excel"/>
+                <button id="scheduleMaintenance" action="equipmentsTable.scheduleMaintenance"/>
             </buttonsPanel>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">

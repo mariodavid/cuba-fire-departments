@@ -37,6 +37,7 @@
                         <action id="clear" type="picker_clear"/>
                     </actions>
                 </lookupPickerField>
+                <lookupField id="maintenanceIntervalField" property="maintenanceInterval"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

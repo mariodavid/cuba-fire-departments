@@ -11,4 +11,15 @@
         <property name="fireDepartment" view="_minimal"/>
         <property name="user" view="_minimal"/>
     </view>
+    <view entity="cfd_FireDepartment" name="fireDepartment-with-employees" extends="_local">
+        <property name="employees" view="_base">
+            <property name="user" view="_minimal"/>
+        </property>
+    </view>
+    <view entity="cfd_Equipment" name="equipment-complete" extends="_local">
+        <property name="maintenances" view="_base">
+            <property name="performedBy" view="_minimal"/>
+        </property>
+        <property name="fireDepartment" view="_minimal"/>
+    </view>
 </views>

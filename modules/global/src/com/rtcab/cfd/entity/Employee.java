@@ -40,6 +40,17 @@ public class Employee extends StandardEntity {
     @Lookup(type = LookupType.DROPDOWN, actions = {})
     private User user;
 
+    @Column(name = "MECHANIC", nullable = false)
+    private Boolean mechanic = false;
+
+    public Boolean getMechanic() {
+        return mechanic;
+    }
+
+    public void setMechanic(Boolean mechanic) {
+        this.mechanic = mechanic;
+    }
+
     public User getUser() {
         return user;
     }

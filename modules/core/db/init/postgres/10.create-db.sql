@@ -10,6 +10,7 @@ create table CFD_FIRE_DEPARTMENT (
     DELETED_BY varchar(50),
     --
     NAME varchar(255) not null,
+    FIRE_CHIEF_ID uuid,
     STREET varchar(255),
     HOUSENUMBER varchar(255),
     CITY varchar(255),
@@ -35,6 +36,7 @@ create table CFD_EMPLOYEE (
     BIRTHDATE date,
     FIRE_DEPARTMENT_ID uuid not null,
     USER_ID uuid,
+    MECHANIC boolean not null,
     --
     primary key (ID)
 )^
@@ -129,6 +131,7 @@ create table CFD_EQUIPMENT (
     NAME varchar(255) not null,
     TYPE_ varchar(50) not null,
     FIRE_DEPARTMENT_ID uuid not null,
+    MAINTENANCE_INTERVAL varchar(50),
     --
     primary key (ID)
 )^

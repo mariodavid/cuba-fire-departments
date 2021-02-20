@@ -32,6 +32,17 @@ public class Equipment extends StandardEntity {
     @JoinColumn(name = "FIRE_DEPARTMENT_ID")
     private FireDepartment fireDepartment;
 
+    @Column(name = "MAINTENANCE_INTERVAL")
+    private String maintenanceInterval;
+
+    public MaintenanceInterval getMaintenanceInterval() {
+        return maintenanceInterval == null ? null : MaintenanceInterval.fromId(maintenanceInterval);
+    }
+
+    public void setMaintenanceInterval(MaintenanceInterval maintenanceInterval) {
+        this.maintenanceInterval = maintenanceInterval == null ? null : maintenanceInterval.getId();
+    }
+
     public FireDepartment getFireDepartment() {
         return fireDepartment;
     }

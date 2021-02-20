@@ -4,8 +4,8 @@
     <menu id="application-cfd" insertBefore="administration" caption="mainMsg://menu_config.application-cfd">
         <item screen="cfd_FireDepartment.browse" caption="mainMsg://menu_config.cfd_FireDepartment.browse"/>
         <item screen="cfd_Employee.browse" caption="mainMsg://menu_config.cfd_Employee.browse"/>
-        <item screen="cfd_Maintenance.browse" caption="mainMsg://menu_config.cfd_Maintenance.browse"/>
         <item screen="cfd_Equipment.browse" caption="mainMsg://menu_config.cfd_Equipment.browse"/>
+        <item screen="cfd_Maintenance.browse" caption="mainMsg://menu_config.cfd_Maintenance.browse"/>
     </menu>
     <menu id="courseManagement" caption="mainMsg://menu_config.courseManagement" insertBefore="administration">
         <item screen="cfd_Course.browse" caption="mainMsg://menu_config.cfd_Course.browse"/>

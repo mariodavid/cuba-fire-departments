@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bproc="http://schemas.haulmont.com/bproc/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef">
+  <collaboration id="Collaboration_1jvj9nx">
+    <participant id="CFD" name="CFD" processRef="equipment-maintenance" />
+  </collaboration>
+  <process id="equipment-maintenance" name="Equipment Maintenance" isExecutable="true">
+    <laneSet id="LaneSet_11h8b11">
+      <lane id="Lane_0rjmrae" name="Supervisor">
+        <flowNodeRef>maintenance-requested</flowNodeRef>
+        <flowNodeRef>reschedule-maintenance</flowNodeRef>
+      </lane>
+      <lane id="Lane_14pai0c" name="Mechanics">
+        <extensionElements>
+          <bproc:assignmentDetails assigneeSource="expression" candidateUsers="${cfd_PossibleMechanicsUserProvider.getForProcess(execution.id)}" candidateUsersValue="cfd_PossibleMechanicsUserProvider" candidateUsersSource="userListProvider" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>perform-maintenance</flowNodeRef>
+        <flowNodeRef>schedule-maintenance-request</flowNodeRef>
+        <flowNodeRef>scheduled-decision</flowNodeRef>
+      </lane>
+      <lane id="Lane_14dld4o" name="System">
+        <flowNodeRef>wait-for-scheduled-at-event</flowNodeRef>
+        <flowNodeRef>complete-maintenance</flowNodeRef>
+        <flowNodeRef>ExclusiveGateway_1kn6943</flowNodeRef>
+        <flowNodeRef>EndEvent_0n36k7k</flowNodeRef>
+        <flowNodeRef>EndEvent_0b6s7xo</flowNodeRef>
+        <flowNodeRef>cancel-maintenance</flowNodeRef>
+      </lane>
+    </laneSet>
+    <sequenceFlow id="SequenceFlow_12x9vmy" sourceRef="maintenance-requested" targetRef="schedule-maintenance-request" />
+    <startEvent id="maintenance-requested" name="Maintenance requested">
+      <extensionElements>
+        <bproc:formData type="no-form" />
+        <bproc:processVariables>
+          <bproc:processVariable name="equipment" type="entity" />
+          <bproc:processVariable name="fireDepartment" type="entity" />
+          <bproc:processVariable name="schedulingRangeStart" type="date" />
+          <bproc:processVariable name="schedulingRangeEnd" type="date" />
+          <bproc:processVariable name="maintenance" type="entity" />
+          <bproc:processVariable name="mechanic" type="entity" />
+          <bproc:processVariable name="scheduledAt" type="dateTime" />
+          <bproc:processVariable name="supervisor" type="user" />
+        </bproc:processVariables>
+      </extensionElements>
+      <outgoing>SequenceFlow_12x9vmy</outgoing>
+    </startEvent>
+    <sequenceFlow id="SequenceFlow_00coj21" sourceRef="schedule-maintenance-request" targetRef="scheduled-decision" />
+    <sequenceFlow id="SequenceFlow_1in3gji" name="need to reschedule" sourceRef="scheduled-decision" targetRef="reschedule-maintenance">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_02rojum" userTaskOutcome="Need-to-Reschedule" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_02rojum_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_02rojum_result'), 'Need-to-Reschedule')}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_0xku85x" name="scheduled" sourceRef="scheduled-decision" targetRef="wait-for-scheduled-at-event">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_02rojum" userTaskOutcome="Scheduled" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_02rojum_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_02rojum_result'), 'Scheduled')}</conditionExpression>
+    </sequenceFlow>
+    <intermediateCatchEvent id="wait-for-scheduled-at-event" name="Wait for Maintenance Scheduled Date">
+      <incoming>SequenceFlow_0xku85x</incoming>
+      <outgoing>SequenceFlow_01wfxf0</outgoing>
+      <timerEventDefinition>
+        <timeDate xsi:type="tFormalExpression">${scheduledAt}</timeDate>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="SequenceFlow_01wfxf0" sourceRef="wait-for-scheduled-at-event" targetRef="perform-maintenance">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_0t0j98o" sourceRef="complete-maintenance" targetRef="EndEvent_0b6s7xo" />
+    <sequenceFlow id="SequenceFlow_0v0rdnr" sourceRef="perform-maintenance" targetRef="ExclusiveGateway_1kn6943" />
+    <sequenceFlow id="SequenceFlow_1530anv" name="complete" sourceRef="ExclusiveGateway_1kn6943" targetRef="complete-maintenance">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_09emz40" userTaskOutcome="complete" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_09emz40_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_09emz40_result'), 'complete')}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_0wkhhre" name="cancel" sourceRef="ExclusiveGateway_1kn6943" targetRef="cancel-maintenance">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Task_09emz40" userTaskOutcome="cancel" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Task_09emz40_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('Task_09emz40_result'), 'cancel')}</conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="complete-maintenance" name="Complete Maintenance" flowable:expression="${cfd_MaintenanceService.finishMaintenance(maintenance)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="cfd_MaintenanceService" methodName="finishMaintenance">
+          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>SequenceFlow_1530anv</incoming>
+      <outgoing>SequenceFlow_0t0j98o</outgoing>
+    </serviceTask>
+    <exclusiveGateway id="ExclusiveGateway_1kn6943" name="Outcome?">
+      <incoming>SequenceFlow_0v0rdnr</incoming>
+      <outgoing>SequenceFlow_1530anv</outgoing>
+      <outgoing>SequenceFlow_0wkhhre</outgoing>
+    </exclusiveGateway>
+    <endEvent id="EndEvent_0n36k7k">
+      <incoming>SequenceFlow_1m9ctcv</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_1m9ctcv" sourceRef="cancel-maintenance" targetRef="EndEvent_0n36k7k" />
+    <endEvent id="EndEvent_0b6s7xo">
+      <incoming>SequenceFlow_0t0j98o</incoming>
+    </endEvent>
+    <serviceTask id="cancel-maintenance" name="Cancel Maintenance" flowable:expression="${cfd_MaintenanceService.cancelMaintenance(maintenance)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="cfd_MaintenanceService" methodName="cancelMaintenance">
+          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>SequenceFlow_0wkhhre</incoming>
+      <outgoing>SequenceFlow_1m9ctcv</outgoing>
+    </serviceTask>
+    <userTask id="perform-maintenance" name="Perform Maintenance" flowable:assignee="${mechanic.id}" bproc:assigneeSource="processVariable" bproc:assigneeValue="mechanic">
+      <extensionElements>
+        <bproc:formData type="input-dialog" openMode="DIALOG">
+          <bproc:formFields>
+            <bproc:formField id="equipment" caption="Equipment" type="entity" editable="false" required="true">
+              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
+              <bproc:formFieldProperty name="entityName" value="cfd_Equipment" />
+            </bproc:formField>
+          </bproc:formFields>
+          <bproc:formOutcomes>
+            <bproc:formOutcome id="complete" caption="Complete" icon="font-icon:CHECK_SQUARE_O" />
+            <bproc:formOutcome id="cancel" caption="Cancel" icon="font-icon:CLOSE" />
+          </bproc:formOutcomes>
+        </bproc:formData>
+      </extensionElements>
+      <incoming>SequenceFlow_01wfxf0</incoming>
+      <outgoing>SequenceFlow_0v0rdnr</outgoing>
+    </userTask>
+    <userTask id="schedule-maintenance-request" name="Schedule Maintenance Request" flowable:candidateUsers="${cfd_PossibleMechanicsUserProvider.getForProcess(execution.id)}" bproc:candidateUsersSource="userListProvider" bproc:candidateUsersValue="cfd_PossibleMechanicsUserProvider">
+      <extensionElements>
+        <bproc:formData type="cuba-screen" openMode="DIALOG" screenId="cfd_Maintenance.schedule">
+          <bproc:formOutcomes>
+            <bproc:formOutcome id="Scheduled" />
+            <bproc:formOutcome id="Need-to-Reschedule" />
+          </bproc:formOutcomes>
+        </bproc:formData>
+      </extensionElements>
+      <incoming>SequenceFlow_12x9vmy</incoming>
+      <incoming>SequenceFlow_1v5tl87</incoming>
+      <outgoing>SequenceFlow_00coj21</outgoing>
+    </userTask>
+    <exclusiveGateway id="scheduled-decision" name="Scheduled?">
+      <incoming>SequenceFlow_00coj21</incoming>
+      <outgoing>SequenceFlow_1in3gji</outgoing>
+      <outgoing>SequenceFlow_0xku85x</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_1v5tl87" sourceRef="reschedule-maintenance" targetRef="schedule-maintenance-request">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <userTask id="reschedule-maintenance" name="Reschedule Maintenance" flowable:assignee="${supervisor.id}" bproc:assigneeSource="processVariable" bproc:assigneeValue="supervisor">
+      <extensionElements>
+        <bproc:formData type="cuba-screen" openMode="DIALOG" screenId="cfd_RescheduleMaintenance" />
+      </extensionElements>
+      <incoming>SequenceFlow_1in3gji</incoming>
+      <outgoing>SequenceFlow_1v5tl87</outgoing>
+    </userTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_1jvj9nx">
+      <bpmndi:BPMNShape id="Participant_1p574xd_di" bpmnElement="CFD" isHorizontal="true">
+        <omgdc:Bounds x="88" y="54" width="1076" height="543" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="maintenance-requested">
+        <omgdc:Bounds x="168" y="150" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="152" y="120" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0rjmrae_di" bpmnElement="Lane_0rjmrae" isHorizontal="true">
+        <omgdc:Bounds x="118" y="54" width="1046" height="184" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_14pai0c_di" bpmnElement="Lane_14pai0c" isHorizontal="true">
+        <omgdc:Bounds x="118" y="238" width="1046" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12x9vmy_di" bpmnElement="SequenceFlow_12x9vmy">
+        <di:waypoint x="183" y="180" />
+        <di:waypoint x="183" y="313" />
+        <di:waypoint x="238" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0uuuj9w_di" bpmnElement="schedule-maintenance-request">
+        <omgdc:Bounds x="238" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00coj21_di" bpmnElement="SequenceFlow_00coj21">
+        <di:waypoint x="338" y="313" />
+        <di:waypoint x="395" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_14dld4o_di" bpmnElement="Lane_14dld4o" isHorizontal="true">
+        <omgdc:Bounds x="118" y="398" width="1046" height="199" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0anx8rc_di" bpmnElement="scheduled-decision" isMarkerVisible="true">
+        <omgdc:Bounds x="395" y="288" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="453" y="306" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1in3gji_di" bpmnElement="SequenceFlow_1in3gji">
+        <di:waypoint x="420" y="288" />
+        <di:waypoint x="420" y="132" />
+        <di:waypoint x="379" y="132" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="361" y="182" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xku85x_di" bpmnElement="SequenceFlow_0xku85x">
+        <di:waypoint x="420" y="338" />
+        <di:waypoint x="420" y="500" />
+        <di:waypoint x="465" y="500" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="359" y="453" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0d4kkgx_di" bpmnElement="wait-for-scheduled-at-event">
+        <omgdc:Bounds x="465" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="444" y="525" width="79" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01wfxf0_di" bpmnElement="SequenceFlow_01wfxf0">
+        <di:waypoint x="501" y="500" />
+        <di:waypoint x="534" y="500" />
+        <di:waypoint x="534" y="313" />
+        <di:waypoint x="577" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0umy2wk_di" bpmnElement="perform-maintenance">
+        <omgdc:Bounds x="577" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1bmpp2x_di" bpmnElement="complete-maintenance">
+        <omgdc:Bounds x="840" y="418" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0b6s7xo_di" bpmnElement="EndEvent_0b6s7xo">
+        <omgdc:Bounds x="1028" y="440" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0t0j98o_di" bpmnElement="SequenceFlow_0t0j98o">
+        <di:waypoint x="940" y="458" />
+        <di:waypoint x="1028" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1kn6943_di" bpmnElement="ExclusiveGateway_1kn6943" isMarkerVisible="true">
+        <omgdc:Bounds x="702" y="433" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="640" y="451" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v0rdnr_di" bpmnElement="SequenceFlow_0v0rdnr">
+        <di:waypoint x="677" y="313" />
+        <di:waypoint x="727" y="313" />
+        <di:waypoint x="727" y="433" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1530anv_di" bpmnElement="SequenceFlow_1530anv">
+        <di:waypoint x="752" y="458" />
+        <di:waypoint x="840" y="458" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="768" y="441" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wkhhre_di" bpmnElement="SequenceFlow_0wkhhre">
+        <di:waypoint x="727" y="483" />
+        <di:waypoint x="727" y="547" />
+        <di:waypoint x="840" y="547" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="773" y="530" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0n36k7k_di" bpmnElement="EndEvent_0n36k7k">
+        <omgdc:Bounds x="1028" y="529" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1m9ctcv_di" bpmnElement="SequenceFlow_1m9ctcv">
+        <di:waypoint x="940" y="547" />
+        <di:waypoint x="1028" y="547" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1nznxyo_di" bpmnElement="cancel-maintenance">
+        <omgdc:Bounds x="840" y="507" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0h36c65_di" bpmnElement="reschedule-maintenance">
+        <omgdc:Bounds x="279" y="92" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v5tl87_di" bpmnElement="SequenceFlow_1v5tl87">
+        <di:waypoint x="279" y="132" />
+        <di:waypoint x="263" y="132" />
+        <di:waypoint x="265" y="273" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

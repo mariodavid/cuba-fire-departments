@@ -12,6 +12,8 @@
         <property name="remoteServices">
             <map>
                 <entry key="cfd_CourseEnrollmentService" value="com.rtcab.cfd.service.CourseEnrollmentService"/>
+                <entry key="cfd_EmployeeService" value="com.rtcab.cfd.service.EmployeeService"/>
+                <entry key="cfd_MaintenanceService" value="com.rtcab.cfd.service.MaintenanceService"/>
             </map>
         </property>
     </bean>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://maintenanceEdit.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.maintenance">
+    <data>
+        <instance id="maintenanceDc"
+                  class="com.rtcab.cfd.entity.Maintenance">
+            <view extends="_local">
+                <property name="equipment" view="_minimal"/>
+                <property name="performedBy" view="_minimal"/>
+            </view>
+            <loader/>
+        </instance>
+        <collection id="equipmentsDc" class="com.rtcab.cfd.entity.Equipment" view="_minimal">
+            <loader id="equipmentsDl">
+                <query>
+                    <![CDATA[select e from cfd_Equipment e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="editActions" spacing="true">
+        <form id="form" dataContainer="maintenanceDc">
+            <column width="350px">
+                <lookupPickerField id="equipmentField" optionsContainer="equipmentsDc" property="equipment"/>
+                <dateField id="scheduledAtField" property="scheduledAt"/>
+                <dateField id="performedAtField" property="performedAt"/>
+                <pickerField id="performedByField" property="performedBy">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                        <action id="clear" type="picker_clear"/>
+                    </actions>
+                </pickerField>
+                <lookupField id="statusField" property="status"/>
+            </column>
+        </form>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

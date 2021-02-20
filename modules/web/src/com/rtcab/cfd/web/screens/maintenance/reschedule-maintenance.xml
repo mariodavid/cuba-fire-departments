@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://rescheduleMaintenance.caption"
+        messagesPack="com.rtcab.cfd.web.screens.maintenance">
+    <layout>
+
+
+        <vbox spacing="true">
+            <label width="100%" id="needToRescheduleHelpText" stylename="failure"/>
+            <datePicker align="BOTTOM_CENTER" caption="msg://rescheduledAt" resolution="DAY" id="rescheduledAt"/>
+
+
+            <hbox id="taskActions" spacing="true">
+                <button id="rescheduledBtn" icon="font-icon:CHECK" caption="msg://rescheduledBtn"/>
+            </hbox>
+        </vbox>
+    </layout>
+</window>

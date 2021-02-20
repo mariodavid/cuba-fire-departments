@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://maintenanceSchedule.caption"
+        focusComponent="form"
+        messagesPack="com.rtcab.cfd.web.screens.maintenance">
+    <data>
+        <instance id="maintenanceDc"
+                  class="com.rtcab.cfd.entity.Maintenance">
+            <view extends="_local">
+                <property name="equipment" view="_minimal"/>
+                <property name="performedBy" view="_minimal"/>
+            </view>
+            <loader/>
+        </instance>
+        <instance id="equipmentDc" class="com.rtcab.cfd.entity.Equipment" view="equipment-complete">
+            <collection id="maintenancesForEquipmentDc" property="maintenances"/>
+        </instance>
+    </data>
+    <dialogMode height="768"
+                width="1024"/>
+    <layout expand="taskActions" spacing="true">
+        <groupBox id="equipmentGroupBox" caption="msg://equipmentInformation" spacing="true">
+            <form id="equipmentForm" dataContainer="equipmentDc">
+                <column width="350px">
+                    <textField id="equipmentNameField" property="name" editable="false" colspan="2" />
+                    <textField id="equipmentTypeField" property="type" editable="false"/>
+                </column>
+                <column width="350px">
+                    <lookupField id="maintenanceIntervalField" property="maintenanceInterval" editable="false"/>
+                </column>
+            </form>
+            <table
+                    caption="msg://previousMaintenances"
+                    id="previousMaintenancesTable"
+                    dataContainer="maintenancesForEquipmentDc"
+                    width="100%"
+                    height="200px"
+                    columnControlVisible="false"
+                    presentations="false"
+                    reorderingAllowed="false"
+                    contextMenuEnabled="false"
+            >
+                <actions>
+                    <action id="view" type="view"/>
+                </actions>
+                <columns>
+                    <column id="performedAt"/>
+                    <column id="performedBy"/>
+                    <column id="status"/>
+                </columns>
+            </table>
+        </groupBox>
+        <groupBox id="schedulingGroupBox" caption="msg://scheduling">
+            <form id="form" dataContainer="maintenanceDc">
+                <column width="350px">
+                    <dateField id="scheduledAtField" property="scheduledAt"/>
+                    <label icon="font-icon:CLOCK_O" id="scheduledHelpText" stylename="h4"/>
+                </column>
+            </form>
+        </groupBox>
+
+        <hbox id="taskActions" spacing="true">
+            <button id="scheduledBtn" icon="font-icon:CHECK" caption="msg://scheduled"/>
+            <button id="needToRescheduleBtn" icon="font-icon:BAN" caption="msg://needToReschedule"/>
+        </hbox>
+    </layout>
+</window>

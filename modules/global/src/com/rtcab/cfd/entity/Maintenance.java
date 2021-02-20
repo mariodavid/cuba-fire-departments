@@ -1,5 +1,6 @@
 package com.rtcab.cfd.entity;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Table(name = "CFD_MAINTENANCE")
 @Entity(name = "cfd_Maintenance")
+@NamePattern("%s - %s|equipment,performedAt")
 public class Maintenance extends StandardEntity {
     private static final long serialVersionUID = 1571584068255099686L;
 

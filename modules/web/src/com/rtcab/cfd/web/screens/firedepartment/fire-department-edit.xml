@@ -8,12 +8,20 @@
                   class="com.rtcab.cfd.entity.FireDepartment">
             <view extends="_local">
                 <property name="employees" view="_base"/>
-                <property name="operations" view="_base"/>
+                <property name="operations" view="_base">
+                    <property name="type" view="_minimal"/>
+                </property>
+                <property name="fireChief" view="_minimal"/>
             </view>
             <loader/>
             <collection id="employeesDc" property="employees"/>
             <collection id="operationsDc" property="operations"/>
         </instance>
+        <collection id="fireChiefsDc" class="com.rtcab.cfd.entity.Employee" view="_minimal">
+            <loader>
+                <query>select e from cfd_Employee e</query>
+            </loader>
+        </collection>
     </data>
     <dialogMode height="600"
                 width="800"/>
@@ -63,6 +71,7 @@
                         <textField id="cityField" property="city"/>
                         <textField id="postalCodeField" property="postalCode"/>
                         <lookupField id="typeField" property="type"/>
+                        <lookupField id="fireChiefField" property="fireChief" optionsContainer="fireChiefsDc"/>
                     </column>
                 </form>
             </tab>
