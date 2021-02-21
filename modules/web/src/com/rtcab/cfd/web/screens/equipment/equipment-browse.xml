@@ -37,6 +37,7 @@
         </filter>
         <groupTable id="equipmentsTable"
                     width="100%"
+                    multiselect="true"
                     dataContainer="equipmentsDc">
             <actions>
                 <action id="create" type="create"/>

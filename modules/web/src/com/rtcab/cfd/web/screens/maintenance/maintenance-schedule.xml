@@ -54,6 +54,7 @@
             <form id="form" dataContainer="maintenanceDc">
                 <column width="350px">
                     <dateField id="scheduledAtField" property="scheduledAt"/>
+                    <checkBox id="simulateScheduling" contextHelpText="msg://simulateSchedulingContextHelpText" caption="msg://simulateScheduling"/>
                     <label icon="font-icon:CLOCK_O" id="scheduledHelpText" stylename="h4"/>
                 </column>
             </form>

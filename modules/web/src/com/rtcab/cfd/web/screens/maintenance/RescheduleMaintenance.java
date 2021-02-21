@@ -12,7 +12,7 @@ import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.cuba.security.entity.User;
 import com.haulmont.cuba.security.global.UserSession;
 import com.rtcab.cfd.entity.Equipment;
-import com.rtcab.cfd.web.screens.DateConversion;
+import com.rtcab.cfd.DateConversion;
 
 import javax.inject.Inject;
 import java.time.LocalDate;

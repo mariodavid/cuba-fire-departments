@@ -8,6 +8,7 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.DatatypeFormatter;
 import com.haulmont.cuba.core.global.TimeSource;
 import com.haulmont.cuba.gui.components.Button;
+import com.haulmont.cuba.gui.components.CheckBox;
 import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Label;
 import com.haulmont.cuba.gui.model.InstanceContainer;
@@ -19,12 +20,10 @@ import com.rtcab.cfd.entity.FireDepartment;
 import com.rtcab.cfd.entity.Maintenance;
 import com.rtcab.cfd.entity.MaintenanceStatus;
 import com.rtcab.cfd.service.EmployeeService;
-import com.rtcab.cfd.web.screens.DateConversion;
+import com.rtcab.cfd.DateConversion;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +77,8 @@ public class MaintenanceSchedule extends StandardEditor<Maintenance> {
     private TimeSource timeSource;
     @Inject
     private DateConversion dateConversion;
+    @Inject
+    private CheckBox simulateScheduling;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -101,6 +102,7 @@ public class MaintenanceSchedule extends StandardEditor<Maintenance> {
         scheduledAtField.setRangeStart(rangeStart);
         scheduledAtField.setRangeEnd(rangeEnd);
 
+        simulateScheduling.setValue(true);
 
         scheduledHelpText.setValue(
                 messageBundle.formatMessage(
@@ -120,11 +122,13 @@ public class MaintenanceSchedule extends StandardEditor<Maintenance> {
         processVariables.put("maintenance", getEditedEntity());
         processVariables.put("mechanic", currentUser());
 
-        /*
-        for demonstration purposes the time is set to 'now()+1 minute' instead of the real scheduled At date
-         */
-        processVariables.put("scheduledAt", dateConversion.toDate(timeSource.now().plusMinutes(1).withSecond(0).toLocalDateTime()));
-        //processVariables.put("scheduledAt", toDate(getEditedEntity().getScheduledAt().atTime(8, 0)));
+
+        if (simulateScheduling.isChecked()) {
+            processVariables.put("scheduledAt", dateConversion.toDate(timeSource.now().plusMinutes(1).withSecond(0).toLocalDateTime()));
+        }
+        else  {
+            processVariables.put("scheduledAt", dateConversion.toDate(getEditedEntity().getScheduledAt().atTime(8,0)));
+        }
 
         commitChanges()
                 .then(() -> {

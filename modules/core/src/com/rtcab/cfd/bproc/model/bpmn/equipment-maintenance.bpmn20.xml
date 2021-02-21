@@ -6,8 +6,8 @@
   <process id="equipment-maintenance" name="Equipment Maintenance" isExecutable="true">
     <laneSet id="LaneSet_11h8b11">
       <lane id="Lane_0rjmrae" name="Supervisor">
-        <flowNodeRef>maintenance-requested</flowNodeRef>
         <flowNodeRef>reschedule-maintenance</flowNodeRef>
+        <flowNodeRef>maintenance-requested</flowNodeRef>
       </lane>
       <lane id="Lane_14pai0c" name="Mechanics">
         <extensionElements>
@@ -16,33 +16,21 @@
         <flowNodeRef>perform-maintenance</flowNodeRef>
         <flowNodeRef>schedule-maintenance-request</flowNodeRef>
         <flowNodeRef>scheduled-decision</flowNodeRef>
+        <flowNodeRef>schedule-next-maintenance</flowNodeRef>
+        <flowNodeRef>EndEvent_1dswiut</flowNodeRef>
       </lane>
       <lane id="Lane_14dld4o" name="System">
         <flowNodeRef>wait-for-scheduled-at-event</flowNodeRef>
-        <flowNodeRef>complete-maintenance</flowNodeRef>
         <flowNodeRef>ExclusiveGateway_1kn6943</flowNodeRef>
-        <flowNodeRef>EndEvent_0n36k7k</flowNodeRef>
-        <flowNodeRef>EndEvent_0b6s7xo</flowNodeRef>
+        <flowNodeRef>complete-maintenance</flowNodeRef>
         <flowNodeRef>cancel-maintenance</flowNodeRef>
+        <flowNodeRef>ExclusiveGateway_0hazjmi</flowNodeRef>
+        <flowNodeRef>follow-up-required-decision</flowNodeRef>
+        <flowNodeRef>ExclusiveGateway_0t0ld48</flowNodeRef>
+        <flowNodeRef>EndEvent_139itub</flowNodeRef>
       </lane>
     </laneSet>
     <sequenceFlow id="SequenceFlow_12x9vmy" sourceRef="maintenance-requested" targetRef="schedule-maintenance-request" />
-    <startEvent id="maintenance-requested" name="Maintenance requested">
-      <extensionElements>
-        <bproc:formData type="no-form" />
-        <bproc:processVariables>
-          <bproc:processVariable name="equipment" type="entity" />
-          <bproc:processVariable name="fireDepartment" type="entity" />
-          <bproc:processVariable name="schedulingRangeStart" type="date" />
-          <bproc:processVariable name="schedulingRangeEnd" type="date" />
-          <bproc:processVariable name="maintenance" type="entity" />
-          <bproc:processVariable name="mechanic" type="entity" />
-          <bproc:processVariable name="scheduledAt" type="dateTime" />
-          <bproc:processVariable name="supervisor" type="user" />
-        </bproc:processVariables>
-      </extensionElements>
-      <outgoing>SequenceFlow_12x9vmy</outgoing>
-    </startEvent>
     <sequenceFlow id="SequenceFlow_00coj21" sourceRef="schedule-maintenance-request" targetRef="scheduled-decision" />
     <sequenceFlow id="SequenceFlow_1in3gji" name="need to reschedule" sourceRef="scheduled-decision" targetRef="reschedule-maintenance">
       <extensionElements>
@@ -68,8 +56,11 @@
         <bproc:conditionDetails conditionSource="expression" />
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_0t0j98o" sourceRef="complete-maintenance" targetRef="EndEvent_0b6s7xo" />
-    <sequenceFlow id="SequenceFlow_0v0rdnr" sourceRef="perform-maintenance" targetRef="ExclusiveGateway_1kn6943" />
+    <sequenceFlow id="SequenceFlow_0v0rdnr" sourceRef="perform-maintenance" targetRef="ExclusiveGateway_1kn6943">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
     <sequenceFlow id="SequenceFlow_1530anv" name="complete" sourceRef="ExclusiveGateway_1kn6943" targetRef="complete-maintenance">
       <extensionElements>
         <bproc:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="perform-maintenance" userTaskOutcome="complete" />
@@ -82,36 +73,6 @@
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('perform-maintenance_result') != null &amp;&amp; bproc_UserTaskResults.containsOutcome(execution.getVariable('perform-maintenance_result'), 'cancel')}</conditionExpression>
     </sequenceFlow>
-    <serviceTask id="complete-maintenance" name="Complete Maintenance" flowable:expression="${cfd_MaintenanceService.finishMaintenance(maintenance)}" bproc:taskType="springBean">
-      <extensionElements>
-        <bproc:springBean beanName="cfd_MaintenanceService" methodName="finishMaintenance">
-          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
-        </bproc:springBean>
-      </extensionElements>
-      <incoming>SequenceFlow_1530anv</incoming>
-      <outgoing>SequenceFlow_0t0j98o</outgoing>
-    </serviceTask>
-    <exclusiveGateway id="ExclusiveGateway_1kn6943" name="Outcome?">
-      <incoming>SequenceFlow_0v0rdnr</incoming>
-      <outgoing>SequenceFlow_1530anv</outgoing>
-      <outgoing>SequenceFlow_0wkhhre</outgoing>
-    </exclusiveGateway>
-    <endEvent id="EndEvent_0n36k7k">
-      <incoming>SequenceFlow_1m9ctcv</incoming>
-    </endEvent>
-    <sequenceFlow id="SequenceFlow_1m9ctcv" sourceRef="cancel-maintenance" targetRef="EndEvent_0n36k7k" />
-    <endEvent id="EndEvent_0b6s7xo">
-      <incoming>SequenceFlow_0t0j98o</incoming>
-    </endEvent>
-    <serviceTask id="cancel-maintenance" name="Cancel Maintenance" flowable:expression="${cfd_MaintenanceService.cancelMaintenance(maintenance)}" bproc:taskType="springBean">
-      <extensionElements>
-        <bproc:springBean beanName="cfd_MaintenanceService" methodName="cancelMaintenance">
-          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
-        </bproc:springBean>
-      </extensionElements>
-      <incoming>SequenceFlow_0wkhhre</incoming>
-      <outgoing>SequenceFlow_1m9ctcv</outgoing>
-    </serviceTask>
     <userTask id="perform-maintenance" name="Perform Maintenance" flowable:assignee="${mechanic.id}" bproc:assigneeSource="processVariable" bproc:assigneeValue="mechanic">
       <extensionElements>
         <bproc:formData type="input-dialog" openMode="DIALOG">
@@ -160,26 +121,128 @@
       <incoming>SequenceFlow_1in3gji</incoming>
       <outgoing>SequenceFlow_1v5tl87</outgoing>
     </userTask>
+    <sequenceFlow id="SequenceFlow_1ago8ez" sourceRef="complete-maintenance" targetRef="ExclusiveGateway_0hazjmi" />
+    <sequenceFlow id="SequenceFlow_1d2dkca" sourceRef="cancel-maintenance" targetRef="ExclusiveGateway_0hazjmi" />
+    <sequenceFlow id="SequenceFlow_040pixv" sourceRef="ExclusiveGateway_0hazjmi" targetRef="follow-up-required-decision" />
+    <sequenceFlow id="SequenceFlow_0yznbl8" sourceRef="follow-up-required-decision" targetRef="ExclusiveGateway_0t0ld48" />
+    <sequenceFlow id="SequenceFlow_1m6n2gs" name="yes" sourceRef="ExclusiveGateway_0t0ld48" targetRef="schedule-next-maintenance">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="businessRuleTaskResult" businessRuleTaskId="follow-up-required-decision" decisionTableOutputVariableName="followUpRequired" decisionTableOutputValue="true" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${followUpRequired==true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_09anhsp" name="no" sourceRef="ExclusiveGateway_0t0ld48" targetRef="EndEvent_139itub">
+      <extensionElements>
+        <bproc:conditionDetails conditionSource="businessRuleTaskResult" businessRuleTaskId="follow-up-required-decision" decisionTableOutputVariableName="followUpRequired" decisionTableOutputValue="false" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${followUpRequired==false}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1nr494n" sourceRef="schedule-next-maintenance" targetRef="EndEvent_1dswiut" />
+    <startEvent id="maintenance-requested" name="Maintenance requested">
+      <extensionElements>
+        <bproc:formData type="no-form" />
+        <bproc:processVariables>
+          <bproc:processVariable name="equipment" type="entity" />
+          <bproc:processVariable name="fireDepartment" type="entity" />
+          <bproc:processVariable name="schedulingRangeStart" type="date" />
+          <bproc:processVariable name="schedulingRangeEnd" type="date" />
+          <bproc:processVariable name="maintenance" type="entity" />
+          <bproc:processVariable name="mechanic" type="user" />
+          <bproc:processVariable name="scheduledAt" type="dateTime" />
+          <bproc:processVariable name="supervisor" type="user" />
+          <bproc:processVariable name="followUpRequired" type="boolean" />
+          <bproc:processVariable name="nextMaintenanceProposal" type="string" />
+        </bproc:processVariables>
+      </extensionElements>
+      <outgoing>SequenceFlow_12x9vmy</outgoing>
+    </startEvent>
+    <exclusiveGateway id="ExclusiveGateway_1kn6943" name="Outcome?">
+      <incoming>SequenceFlow_0v0rdnr</incoming>
+      <outgoing>SequenceFlow_1530anv</outgoing>
+      <outgoing>SequenceFlow_0wkhhre</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="complete-maintenance" name="Complete Maintenance" flowable:expression="${cfd_MaintenanceService.finishMaintenance(maintenance)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="cfd_MaintenanceService" methodName="finishMaintenance">
+          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>SequenceFlow_1530anv</incoming>
+      <outgoing>SequenceFlow_1ago8ez</outgoing>
+    </serviceTask>
+    <serviceTask id="cancel-maintenance" name="Cancel Maintenance" flowable:expression="${cfd_MaintenanceService.cancelMaintenance(maintenance)}" bproc:taskType="springBean">
+      <extensionElements>
+        <bproc:springBean beanName="cfd_MaintenanceService" methodName="cancelMaintenance">
+          <bproc:methodParam name="maintenance" type="com.rtcab.cfd.entity.Maintenance" isVariable="true">maintenance</bproc:methodParam>
+        </bproc:springBean>
+      </extensionElements>
+      <incoming>SequenceFlow_0wkhhre</incoming>
+      <outgoing>SequenceFlow_1d2dkca</outgoing>
+    </serviceTask>
+    <exclusiveGateway id="ExclusiveGateway_0hazjmi">
+      <incoming>SequenceFlow_1ago8ez</incoming>
+      <incoming>SequenceFlow_1d2dkca</incoming>
+      <outgoing>SequenceFlow_040pixv</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="follow-up-required-decision" name="Follow Up required?" flowable:type="dmn">
+      <extensionElements>
+        <flowable:field name="decisionTableReferenceKey">
+          <flowable:string>maintenance-follow-up-required</flowable:string>
+        </flowable:field>
+      </extensionElements>
+      <incoming>SequenceFlow_040pixv</incoming>
+      <outgoing>SequenceFlow_0yznbl8</outgoing>
+    </serviceTask>
+    <exclusiveGateway id="ExclusiveGateway_0t0ld48">
+      <incoming>SequenceFlow_0yznbl8</incoming>
+      <outgoing>SequenceFlow_1m6n2gs</outgoing>
+      <outgoing>SequenceFlow_09anhsp</outgoing>
+    </exclusiveGateway>
+    <userTask id="schedule-next-maintenance" name="Schedule next Maintenance" flowable:assignee="${mechanic.id}" bproc:assigneeSource="processVariable" bproc:assigneeValue="mechanic">
+      <extensionElements>
+        <bproc:formData type="input-dialog" openMode="DIALOG">
+          <bproc:formFields>
+            <bproc:formField id="nextMaintenanceProposal" caption="Next Maintenance Proposal" type="enum" editable="true" required="false">
+              <bproc:formFieldEnumValue value="THIS_MONTH" caption="This Month" />
+              <bproc:formFieldEnumValue value="NEXT_MONTH" caption="Next Month" />
+              <bproc:formFieldEnumValue value="NEXT_QUARTER" caption="Next Quarter" />
+            </bproc:formField>
+          </bproc:formFields>
+        </bproc:formData>
+      </extensionElements>
+      <incoming>SequenceFlow_1m6n2gs</incoming>
+      <outgoing>SequenceFlow_1nr494n</outgoing>
+    </userTask>
+    <endEvent id="EndEvent_139itub">
+      <incoming>SequenceFlow_09anhsp</incoming>
+    </endEvent>
+    <endEvent id="EndEvent_1dswiut">
+      <incoming>SequenceFlow_1nr494n</incoming>
+    </endEvent>
+    <association id="Association_1imuoq9" sourceRef="schedule-next-maintenance" targetRef="TextAnnotation_1egupk3" />
+    <textAnnotation id="TextAnnotation_1egupk3">
+      <text>triggers System Mail programmatically</text>
+    </textAnnotation>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process">
     <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_1jvj9nx">
       <bpmndi:BPMNShape id="Participant_1p574xd_di" bpmnElement="CFD" isHorizontal="true">
-        <omgdc:Bounds x="88" y="54" width="1076" height="543" />
+        <omgdc:Bounds x="88" y="43" width="1155" height="566" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="maintenance-requested">
-        <omgdc:Bounds x="168" y="150" width="30" height="30" />
+        <omgdc:Bounds x="168" y="117" width="30" height="30" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="152" y="120" width="63" height="27" />
+          <omgdc:Bounds x="152" y="87" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0rjmrae_di" bpmnElement="Lane_0rjmrae" isHorizontal="true">
-        <omgdc:Bounds x="118" y="54" width="1046" height="184" />
+        <omgdc:Bounds x="118" y="43" width="1125" height="172" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_14pai0c_di" bpmnElement="Lane_14pai0c" isHorizontal="true">
-        <omgdc:Bounds x="118" y="238" width="1046" height="160" />
+        <omgdc:Bounds x="118" y="215" width="1125" height="183" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_12x9vmy_di" bpmnElement="SequenceFlow_12x9vmy">
-        <di:waypoint x="183" y="180" />
+        <di:waypoint x="183" y="147" />
         <di:waypoint x="183" y="313" />
         <di:waypoint x="238" y="313" />
       </bpmndi:BPMNEdge>
@@ -191,7 +254,7 @@
         <di:waypoint x="395" y="313" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Lane_14dld4o_di" bpmnElement="Lane_14dld4o" isHorizontal="true">
-        <omgdc:Bounds x="118" y="398" width="1046" height="199" />
+        <omgdc:Bounds x="118" y="398" width="1125" height="211" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0anx8rc_di" bpmnElement="scheduled-decision" isMarkerVisible="true">
         <omgdc:Bounds x="395" y="288" width="50" height="50" />
@@ -204,7 +267,7 @@
         <di:waypoint x="420" y="132" />
         <di:waypoint x="379" y="132" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="361" y="182" width="54" height="27" />
+          <omgdc:Bounds x="424" y="151" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0xku85x_di" bpmnElement="SequenceFlow_0xku85x">
@@ -231,50 +294,35 @@
         <omgdc:Bounds x="577" y="273" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1bmpp2x_di" bpmnElement="complete-maintenance">
-        <omgdc:Bounds x="840" y="418" width="100" height="80" />
+        <omgdc:Bounds x="738" y="418" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0b6s7xo_di" bpmnElement="EndEvent_0b6s7xo">
-        <omgdc:Bounds x="1028" y="440" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0t0j98o_di" bpmnElement="SequenceFlow_0t0j98o">
-        <di:waypoint x="940" y="458" />
-        <di:waypoint x="1028" y="458" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1kn6943_di" bpmnElement="ExclusiveGateway_1kn6943" isMarkerVisible="true">
-        <omgdc:Bounds x="702" y="433" width="50" height="50" />
+        <omgdc:Bounds x="602" y="433" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="640" y="451" width="51" height="14" />
+          <omgdc:Bounds x="540.5" y="451" width="51" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0v0rdnr_di" bpmnElement="SequenceFlow_0v0rdnr">
-        <di:waypoint x="677" y="313" />
-        <di:waypoint x="727" y="313" />
-        <di:waypoint x="727" y="433" />
+        <di:waypoint x="627" y="353" />
+        <di:waypoint x="627" y="433" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1530anv_di" bpmnElement="SequenceFlow_1530anv">
-        <di:waypoint x="752" y="458" />
-        <di:waypoint x="840" y="458" />
+        <di:waypoint x="652" y="458" />
+        <di:waypoint x="738" y="458" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="768" y="441" width="45" height="14" />
+          <omgdc:Bounds x="668" y="441" width="45" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0wkhhre_di" bpmnElement="SequenceFlow_0wkhhre">
-        <di:waypoint x="727" y="483" />
-        <di:waypoint x="727" y="547" />
-        <di:waypoint x="840" y="547" />
+        <di:waypoint x="627" y="483" />
+        <di:waypoint x="627" y="547" />
+        <di:waypoint x="738" y="547" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="773" y="530" width="32" height="14" />
+          <omgdc:Bounds x="672" y="530" width="32" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0n36k7k_di" bpmnElement="EndEvent_0n36k7k">
-        <omgdc:Bounds x="1028" y="529" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1m9ctcv_di" bpmnElement="SequenceFlow_1m9ctcv">
-        <di:waypoint x="940" y="547" />
-        <di:waypoint x="1028" y="547" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1nznxyo_di" bpmnElement="cancel-maintenance">
-        <omgdc:Bounds x="840" y="507" width="100" height="80" />
+        <omgdc:Bounds x="738" y="507" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0h36c65_di" bpmnElement="reschedule-maintenance">
         <omgdc:Bounds x="279" y="92" width="100" height="80" />
@@ -283,6 +331,66 @@
         <di:waypoint x="279" y="132" />
         <di:waypoint x="263" y="132" />
         <di:waypoint x="265" y="273" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0hazjmi_di" bpmnElement="ExclusiveGateway_0hazjmi" isMarkerVisible="true">
+        <omgdc:Bounds x="884" y="433" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ago8ez_di" bpmnElement="SequenceFlow_1ago8ez">
+        <di:waypoint x="838" y="458" />
+        <di:waypoint x="884" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1d2dkca_di" bpmnElement="SequenceFlow_1d2dkca">
+        <di:waypoint x="838" y="547" />
+        <di:waypoint x="909" y="547" />
+        <di:waypoint x="909" y="483" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_040pixv_di" bpmnElement="SequenceFlow_040pixv">
+        <di:waypoint x="934" y="458" />
+        <di:waypoint x="962" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0c7c1wr_di" bpmnElement="follow-up-required-decision">
+        <omgdc:Bounds x="962" y="418" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0t0ld48_di" bpmnElement="ExclusiveGateway_0t0ld48" isMarkerVisible="true">
+        <omgdc:Bounds x="1088" y="433" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yznbl8_di" bpmnElement="SequenceFlow_0yznbl8">
+        <di:waypoint x="1062" y="458" />
+        <di:waypoint x="1088" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1m6n2gs_di" bpmnElement="SequenceFlow_1m6n2gs">
+        <di:waypoint x="1113" y="433" />
+        <di:waypoint x="1113" y="353" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1090" y="378" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1plo92n_di" bpmnElement="schedule-next-maintenance">
+        <omgdc:Bounds x="1063" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_139itub_di" bpmnElement="EndEvent_139itub">
+        <omgdc:Bounds x="1185" y="440" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09anhsp_di" bpmnElement="SequenceFlow_09anhsp">
+        <di:waypoint x="1138" y="458" />
+        <di:waypoint x="1185" y="458" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1146" y="440" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1dswiut_di" bpmnElement="EndEvent_1dswiut">
+        <omgdc:Bounds x="1185" y="295" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nr494n_di" bpmnElement="SequenceFlow_1nr494n">
+        <di:waypoint x="1163" y="313" />
+        <di:waypoint x="1185" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1egupk3_di" bpmnElement="TextAnnotation_1egupk3">
+        <omgdc:Bounds x="1112" y="135" width="110" height="53" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1imuoq9_di" bpmnElement="Association_1imuoq9">
+        <di:waypoint x="1127" y="273" />
+        <di:waypoint x="1158" y="188" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

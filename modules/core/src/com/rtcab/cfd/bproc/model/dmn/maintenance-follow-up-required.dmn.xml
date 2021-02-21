@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101" namespace="http://www.flowable.org/dmn" name="Maintenance Follow Up required">
+  <decision id="maintenance-follow-up-required" name="Maintenance Follow Up required">
+    <decisionTable hitPolicy="UNIQUE">
+      <input label="Maintenance Status">
+        <inputExpression id="input_tBQxY" typeRef="string">
+          <text><![CDATA[maintenance.status]]></text>
+        </inputExpression>
+      </input>
+      <input label="Equipment Type">
+        <inputExpression id="input_TKIyX" typeRef="string">
+          <text><![CDATA[equipment.type]]></text>
+        </inputExpression>
+      </input>
+      <output id="output_JFV34" label="Follow Up required?" name="followUpRequired" typeRef="boolean"/>
+      <rule>
+        <inputEntry id="inputEntry_mTbMW">
+          <text><![CDATA["CANCELLED"]]></text>
+        </inputEntry>
+        <inputEntry id="inputEntry_r7w1q">
+          <text><![CDATA["VEHICLE"]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_JTS8B">
+          <text><![CDATA[true]]></text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="inputEntry_cfBRb">
+          <text><![CDATA["CANCELLED"]]></text>
+        </inputEntry>
+        <inputEntry id="inputEntry_ZTVwi">
+          <text><![CDATA[!="VEHICLE"]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_1cyPw">
+          <text><![CDATA[false]]></text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="inputEntry_NR5Wa">
+          <text><![CDATA["DONE"]]></text>
+        </inputEntry>
+        <inputEntry id="inputEntry_xVPTq">
+          <text><![CDATA[]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_8J8sT">
+          <text><![CDATA[false]]></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

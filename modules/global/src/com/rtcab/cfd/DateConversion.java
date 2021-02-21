@@ -1,4 +1,4 @@
-package com.rtcab.cfd.web.screens;
+package com.rtcab.cfd;
 
 import org.springframework.stereotype.Component;
 
