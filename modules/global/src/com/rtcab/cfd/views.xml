@@ -10,6 +10,7 @@
         <property name="courses" view="_minimal"/>
         <property name="fireDepartment" view="_minimal"/>
         <property name="user" view="_minimal"/>
+        <property name="avatar" view="_minimal"/>
     </view>
     <view entity="cfd_FireDepartment" name="fireDepartment-with-employees" extends="_local">
         <property name="employees" view="_base">
@@ -21,5 +22,6 @@
             <property name="performedBy" view="_minimal"/>
         </property>
         <property name="fireDepartment" view="_minimal"/>
+        <property name="operationalManual" view="_minimal"/>
     </view>
 </views>

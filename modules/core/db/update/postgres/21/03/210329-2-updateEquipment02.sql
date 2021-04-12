@@ -1,0 +1,1 @@
+alter table CFD_EQUIPMENT add column GENERAL_MAINTENANCE_REMARKS text ;

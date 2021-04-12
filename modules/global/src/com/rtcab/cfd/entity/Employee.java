@@ -1,6 +1,7 @@
 package com.rtcab.cfd.entity;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -42,6 +43,18 @@ public class Employee extends StandardEntity {
 
     @Column(name = "MECHANIC", nullable = false)
     private Boolean mechanic = false;
+
+    @JoinColumn(name = "AVATAR_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private FileDescriptor avatar;
+
+    public FileDescriptor getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(FileDescriptor avatar) {
+        this.avatar = avatar;
+    }
 
     public Boolean getMechanic() {
         return mechanic;

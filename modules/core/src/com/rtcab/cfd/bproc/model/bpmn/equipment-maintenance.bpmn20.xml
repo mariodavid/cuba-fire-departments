@@ -75,16 +75,10 @@
     </sequenceFlow>
     <userTask id="perform-maintenance" name="Perform Maintenance" flowable:assignee="${mechanic.id}" bproc:assigneeSource="processVariable" bproc:assigneeValue="mechanic">
       <extensionElements>
-        <bproc:formData type="input-dialog" openMode="DIALOG">
-          <bproc:formFields>
-            <bproc:formField id="equipment" caption="Equipment" type="entity" editable="false" required="true">
-              <bproc:formFieldProperty name="uiComponent" value="pickerField" />
-              <bproc:formFieldProperty name="entityName" value="cfd_Equipment" />
-            </bproc:formField>
-          </bproc:formFields>
+        <bproc:formData type="cuba-screen" openMode="DIALOG" screenId="cfd_Maintenance.perform">
           <bproc:formOutcomes>
-            <bproc:formOutcome id="complete" caption="Complete" icon="font-icon:CHECK_SQUARE_O" />
-            <bproc:formOutcome id="cancel" caption="Cancel" icon="font-icon:CLOSE" />
+            <bproc:formOutcome id="complete" />
+            <bproc:formOutcome id="cancel" />
           </bproc:formOutcomes>
         </bproc:formData>
       </extensionElements>

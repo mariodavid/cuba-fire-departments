@@ -1,6 +1,7 @@
 package com.rtcab.cfd.entity;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -34,6 +35,30 @@ public class Equipment extends StandardEntity {
 
     @Column(name = "MAINTENANCE_INTERVAL")
     private String maintenanceInterval;
+
+    @JoinColumn(name = "OPERATIONAL_MANUAL_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private FileDescriptor operationalManual;
+
+    @Column(name = "GENERAL_MAINTENANCE_REMARKS")
+    @Lob
+    private String generalMaintenanceRemarks;
+
+    public String getGeneralMaintenanceRemarks() {
+        return generalMaintenanceRemarks;
+    }
+
+    public void setGeneralMaintenanceRemarks(String generalMaintenanceRemarks) {
+        this.generalMaintenanceRemarks = generalMaintenanceRemarks;
+    }
+
+    public FileDescriptor getOperationalManual() {
+        return operationalManual;
+    }
+
+    public void setOperationalManual(FileDescriptor operationalManual) {
+        this.operationalManual = operationalManual;
+    }
 
     public MaintenanceInterval getMaintenanceInterval() {
         return maintenanceInterval == null ? null : MaintenanceInterval.fromId(maintenanceInterval);

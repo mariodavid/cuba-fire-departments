@@ -12,4 +12,16 @@
 
   --sidemenu-item-badge-color: var(--secondary-contrast-text-color);
   --sidemenu-item-badge-background-color: var(--secondary-color);
+
+  .image-avatar-icon-small {
+    border: 3px solid var(--primary-color);
+    border-radius: 30px;
+    background: white;
+  }
+
+  .image-avatar-icon-large {
+    border: 6px solid var(--primary-color);
+    border-radius: 60px;
+    background: white;
+  }
 }

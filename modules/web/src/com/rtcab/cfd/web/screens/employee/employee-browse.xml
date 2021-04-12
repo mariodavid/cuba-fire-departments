@@ -10,6 +10,7 @@
             <view extends="_local">
                 <property name="fireDepartment" view="_minimal"/>
                 <property name="user" view="_minimal"/>
+                <property name="avatar" view="_minimal"/>
             </view>
             <loader id="employeesDl">
                 <query>

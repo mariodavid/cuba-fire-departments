@@ -37,6 +37,30 @@ public class Maintenance extends StandardEntity {
     @Column(name = "STATUS", nullable = false)
     private String status;
 
+    @Column(name = "COMMENT_")
+    @Lob
+    private String comment;
+
+    @Column(name = "NEXT_MAINTENANCE_REMARK")
+    @Lob
+    private String nextMaintenanceRemark;
+
+    public String getNextMaintenanceRemark() {
+        return nextMaintenanceRemark;
+    }
+
+    public void setNextMaintenanceRemark(String nextMaintenanceRemark) {
+        this.nextMaintenanceRemark = nextMaintenanceRemark;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public MaintenanceStatus getStatus() {
         return status == null ? null : MaintenanceStatus.fromId(status);
     }
@@ -75,5 +99,9 @@ public class Maintenance extends StandardEntity {
 
     public void setEquipment(Equipment equipment) {
         this.equipment = equipment;
+    }
+
+    public boolean performed() {
+        return getStatus().performed() && getPerformedAt() != null;
     }
 }

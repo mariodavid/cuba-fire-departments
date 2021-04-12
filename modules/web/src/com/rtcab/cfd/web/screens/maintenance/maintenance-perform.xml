@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://maintenancePerform.caption"
+        focusComponent="tabSheet"
+        messagesPack="com.rtcab.cfd.web.screens.maintenance">
+    <data>
+        <instance id="maintenanceDc"
+                  class="com.rtcab.cfd.entity.Maintenance">
+            <view extends="_local">
+                <property name="equipment" view="_minimal"/>
+                <property name="performedBy" view="_minimal"/>
+            </view>
+            <loader/>
+        </instance>
+        <instance id="equipmentDc" class="com.rtcab.cfd.entity.Equipment" view="equipment-complete">
+            <collection id="maintenancesForEquipmentDc" property="maintenances"/>
+        </instance>
+    </data>
+    <dialogMode height="768"
+                width="1024"/>
+    <layout expand="tabSheet" spacing="true">
+
+
+        <hbox spacing="true" width="100%">
+            <groupBox id="remarkFromLastMaintenanceGroupBox"
+                      stylename="well"
+                      collapsable="true"
+                      visible="false"
+                      caption="msg://remarkFromLastMaintenance"
+                      width="100%"
+                      icon="font-icon:CLOCK_O">
+                <label id="remarkFromLastMaintenanceField" stylename="colored" width="100%"/>
+            </groupBox>
+
+            <groupBox id="generalMaintenanceRemarksGroupBox"
+                      stylename="well"
+                      collapsable="true"
+                      caption="msg://generalMaintenanceRemarks"
+                      icon="font-icon:STICKY_NOTE_O"
+                      width="100%"
+                      visible="false">
+                <label id="generalMaintenanceRemarksField" stylename="colored" width="100%"/>
+            </groupBox>
+        </hbox>
+
+        <tabSheet id="tabSheet">
+            <tab id="overviewTab" spacing="true" margin="true" caption="msg://overview" expand="equipmentForm">
+
+                <form id="equipmentForm" dataContainer="equipmentDc" captionPosition="TOP">
+                    <column width="350px">
+                        <textField id="equipmentNameField" property="name" editable="false"/>
+                    </column>
+                    <column width="350px">
+                        <textField id="equipmentTypeField" property="type" editable="false"/>
+                    </column>
+                </form>
+
+
+                <textArea
+                        id="commentField"
+                        property="comment"
+                        dataContainer="maintenanceDc"
+                        caption="msg://comment"
+                        width="100%"
+                />
+
+                <textArea
+                        id="nextMaintenanceRemarkField"
+                        property="nextMaintenanceRemark"
+                        dataContainer="maintenanceDc"
+                        caption="msg://remarkForNextMaintenance"
+                        width="100%"
+                />
+
+            </tab>
+            <tab id="previousMaintenancesTab" spacing="true" margin="true" expand="previousMaintenancesTable"
+                 caption="msg://previousMaintenances">
+                <table
+                        id="previousMaintenancesTable"
+                        dataContainer="maintenancesForEquipmentDc"
+                        width="100%"
+                        height="200px"
+                        columnControlVisible="false"
+                        presentations="false"
+                        reorderingAllowed="false"
+                        contextMenuEnabled="false"
+                >
+                    <actions>
+                        <action id="view" type="view"/>
+                    </actions>
+                    <columns>
+                        <column id="performedAt"/>
+                        <column id="performedBy"/>
+                        <column id="status"/>
+                        <column id="comment" maxTextLength="50"/>
+                        <column id="nextMaintenanceRemark" maxTextLength="50" />
+                    </columns>
+                </table>
+            </tab>
+            <tab id="operationalManual" spacing="true" margin="true" expand="operationalModelPdf" caption="msg://operationalManual">
+                <browserFrame id="operationalModelPdf" height="100%" width="100%"/>
+            </tab>
+        </tabSheet>
+
+
+        <hbox id="taskActions" spacing="true">
+            <button id="completeBtn" icon="font-icon:CHECK" caption="msg://complete"/>
+            <button id="cancelBtn" icon="font-icon:BAN" caption="msg://cancel"/>
+        </hbox>
+    </layout>
+</window>

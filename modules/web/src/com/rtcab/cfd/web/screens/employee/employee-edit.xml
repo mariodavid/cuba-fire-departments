@@ -12,6 +12,7 @@
                 </property>
                 <property name="fireDepartment" view="_minimal"/>
                 <property name="user" view="_minimal"/>
+                <property name="avatar" view="_minimal"/>
             </view>
             <loader/>
             <collection id="coursesDc" property="courses"/>
@@ -38,6 +39,7 @@
                 </pickerField>
                 <lookupField id="userField" property="user" optionsContainer="usersDc"/>
                 <checkBox id="mechanicField" property="mechanic"/>
+                <upload fileStoragePutMode="IMMEDIATE" showFileName="true" id="avatarField" property="avatar" permittedExtensions=".png,.jpg"/>
             </column>
         </form>
         <groupBox id="coursesBox" caption="msg://com.rtcab.cfd.entity/Employee.courses">

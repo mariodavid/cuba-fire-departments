@@ -9,6 +9,7 @@
             <view extends="_local">
                 <property name="maintenances" view="_base"/>
                 <property name="fireDepartment" view="_minimal"/>
+                <property name="operationalManual" view="_minimal"/>
             </view>
             <loader/>
         </instance>
@@ -29,7 +30,8 @@
             <column width="350px">
                 <textField id="nameField" property="name"/>
                 <lookupField id="typeField" property="type"/>
-                <lookupPickerField id="fireDepartmentField" optionsContainer="fireDepartmentsDc"
+                <lookupPickerField id="fireDepartmentField"
+                                   optionsContainer="fireDepartmentsDc"
                                    property="fireDepartment">
                     <actions>
                         <action id="lookup" type="picker_lookup"/>
@@ -38,6 +40,9 @@
                     </actions>
                 </lookupPickerField>
                 <lookupField id="maintenanceIntervalField" property="maintenanceInterval"/>
+                <upload fileStoragePutMode="IMMEDIATE" showFileName="true" id="operationalManualField"
+                        property="operationalManual"/>
+                <textArea rows="5" id="generalMaintenanceRemarksField" property="generalMaintenanceRemarks"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

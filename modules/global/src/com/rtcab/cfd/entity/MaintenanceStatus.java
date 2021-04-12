@@ -7,15 +7,17 @@ import javax.annotation.Nullable;
 
 public enum MaintenanceStatus implements EnumClass<String> {
 
-    CREATED("CREATED"),
-    IN_PROGRESS("IN_PROGRESSB"),
-    CANCELLED("CANCELLED"),
-    DONE("DONE");
+    CREATED("CREATED", false),
+    IN_PROGRESS("IN_PROGRESSB", false),
+    CANCELLED("CANCELLED", true),
+    DONE("DONE", true);
 
     private String id;
+    private final boolean performed;
 
-    MaintenanceStatus(String value) {
+    MaintenanceStatus(String value, boolean performed) {
         this.id = value;
+        this.performed = performed;
     }
 
     public String getId() {
@@ -30,5 +32,9 @@ public enum MaintenanceStatus implements EnumClass<String> {
             }
         }
         return null;
+    }
+
+    public boolean performed() {
+        return performed;
     }
 }

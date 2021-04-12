@@ -9,6 +9,7 @@
                     class="com.rtcab.cfd.entity.Equipment">
             <view extends="_local">
                 <property name="fireDepartment" view="_minimal"/>
+                <property name="operationalManual" view="_minimal"/>
             </view>
             <loader id="equipmentsDl">
                 <query>

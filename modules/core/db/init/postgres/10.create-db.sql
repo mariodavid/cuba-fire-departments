@@ -37,6 +37,7 @@ create table CFD_EMPLOYEE (
     FIRE_DEPARTMENT_ID uuid not null,
     USER_ID uuid,
     MECHANIC boolean not null,
+    AVATAR_ID uuid,
     --
     primary key (ID)
 )^
@@ -132,6 +133,8 @@ create table CFD_EQUIPMENT (
     TYPE_ varchar(50) not null,
     FIRE_DEPARTMENT_ID uuid not null,
     MAINTENANCE_INTERVAL varchar(50),
+    OPERATIONAL_MANUAL_ID uuid,
+    GENERAL_MAINTENANCE_REMARKS text,
     --
     primary key (ID)
 )^
@@ -192,6 +195,8 @@ create table CFD_MAINTENANCE (
     PERFORMED_AT timestamp,
     PERFORMED_BY_ID uuid,
     STATUS varchar(50) not null,
+    COMMENT_ text,
+    NEXT_MAINTENANCE_REMARK text,
     --
     primary key (ID)
 )^

@@ -35,6 +35,8 @@
                     </actions>
                 </pickerField>
                 <lookupField id="statusField" property="status"/>
+                <textArea rows="5" id="commentField" property="comment"/>
+                <textArea rows="5" id="nextMaintenanceRemarkField" property="nextMaintenanceRemark"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

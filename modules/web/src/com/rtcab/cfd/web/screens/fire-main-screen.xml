@@ -60,11 +60,19 @@
                       height="100%">
                 <initialLayout margin="true"
                                spacing="true">
-                    <label id="welcomeLabel"
-                           align="MIDDLE_CENTER"
-                           width="100%"
-                           stylename="c-welcome-text"
-                           value="mainMsg://application.welcomeText"/>
+                    <hbox spacing="true"
+                          align="MIDDLE_CENTER">
+                        <label id="welcomeLabel"
+                               align="MIDDLE_CENTER"
+                               width="100%"
+                               stylename="c-welcome-text"
+                               value="mainMsg://application.welcomeText"/>
+                        <image id="avatarImage"
+                               align="MIDDLE_CENTER"
+                               width="200px"
+                               scaleMode="SCALE_DOWN"
+                               stylename=""/>
+                    </hbox>
                 </initialLayout>
             </workArea>
         </hbox>
